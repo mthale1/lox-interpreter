@@ -10,7 +10,14 @@ A Lox interpreter implemented in Kotlin based on *Crafting Interpreters*.
 This project includes the Gradle Wrapper, so Gradle does not need to be installed separately.
 
 ## Build
-From the project root, run:
+Make sure you are in the `lox-interpreter` directory before running the build commands.
+
+If needed, navigate to the project directory:
+```bash
+cd lox-interpreter
+```
+
+Build the project using the Gradle Wrapper:
 ```bash
 ./gradlew build
 ```
