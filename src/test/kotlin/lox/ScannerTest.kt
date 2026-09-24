@@ -2,6 +2,8 @@ package lox
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 class ScannerTest {
 
@@ -14,6 +16,20 @@ class ScannerTest {
         assertEquals(type, token.type)
         assertEquals(lexeme, token.lexeme)
         assertEquals(literal, token.literal)
+    }
+
+    private fun captureError(action: () -> Unit): String {
+        val output = ByteArrayOutputStream()
+        val originalError = System.err
+
+        try {
+            System.setErr(PrintStream(output))
+            action()
+        } finally {
+            System.setErr(originalError)
+        }
+
+        return output.toString().trim()
     }
 
     @Test
@@ -185,18 +201,26 @@ class ScannerTest {
 
     @Test
     fun rejectsUnterminatedString() {
-        val scanner = Scanner("\"hello world")
-        val tokens = scanner.scanTokens()
+        lateinit var tokens: List<Token>
 
+        val error = captureError {
+            tokens = Scanner("\"hello world").scanTokens()
+        }
+
+        assertEquals("[line 1] Error: Unterminated string.", error)
         assertEquals(TokenType.EOF, tokens[0].type)
         assertEquals(1, tokens.size)
     }
 
     @Test
     fun rejectsUnexpectedCharacter() {
-        val scanner = Scanner("@+")
-        val tokens = scanner.scanTokens()
+        lateinit var tokens: List<Token>
 
+        val error = captureError {
+            tokens = Scanner("@+").scanTokens()
+        }
+
+        assertEquals("[line 1] Error: Unexpected character.", error)
         assertEquals(TokenType.PLUS, tokens[0].type)
         assertEquals(TokenType.EOF, tokens[1].type)
         assertEquals(2, tokens.size)

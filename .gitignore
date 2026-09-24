@@ -12,3 +12,6 @@ build
 
 # Ignore compiled JARs
 lox.jar
+
+# Ignore macOS system files
+.DS_Store

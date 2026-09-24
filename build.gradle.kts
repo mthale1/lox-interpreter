@@ -26,6 +26,10 @@ application {
     mainClass = "lox.LoxKt"
 }
 
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
+
 tasks.named<Test>("test") {
     useJUnitPlatform()
 

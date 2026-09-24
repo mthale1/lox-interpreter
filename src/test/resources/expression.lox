@@ -1,0 +1,5 @@
+// Chapter 6 Lox
+
+!(1 + 2 > 3)
+
+// Expected output: (! (group (> (+ 1.0 2.0) 3.0)))
