@@ -1,5 +1,4 @@
-// Chapter 6 Lox
+// Valid Chapter 6 expression used to test file execution.
+// Expected AST output: (! (group (> (+ 1.0 2.0) 3.0)))
 
 !(1 + 2 > 3)
-
-// Expected output: (! (group (> (+ 1.0 2.0) 3.0)))

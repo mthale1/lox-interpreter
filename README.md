@@ -1,6 +1,8 @@
-# Lox Interpreter
-
+# Lox Interpreter 
 A Lox interpreter implemented in Kotlin based on the interpreter developed in *Crafting Interpreters*.
+
+**Name:** Makenzie Hale  
+**Programming Language:** Kotlin  
 
 ## Current Implementation
 
@@ -18,8 +20,10 @@ At this stage, the interpreter can:
 - Report syntax errors during parsing
 - Print parsed expression trees using `AstPrinter`
 
-**The interpreter does not evaluate expressions yet. Valid Lox expressions are currently 
-scanned, parsed into an AST, and printed.**
+### Limitations
+
+This implementation currently includes functionality through Chapter 6 of *Crafting Interpreters*.   
+Expressions can be scanned and parsed into an AST, but expression evaluation and execution are not implemented yet.
 
 ## Chapter 6 - Parsing Expressions Implementation
 Chapter 6 adds `Parser.kt`, which uses recursive descent parsing to convert tokens 
@@ -58,8 +62,9 @@ Build the project using the Gradle Wrapper:
 ```
 This compiles the project and runs the automated test suite.
 
-## Automated Testing
-Run all automated unit tests:
+## Testing
+### Automated Testing
+To run all automated unit tests:
 ```bash
 ./gradlew test
 ```
@@ -79,13 +84,18 @@ expressions, and Visitor routing.
 - `ParserTest.kt` - Tests expression parsing, precedence, associativity, grouping, nesting, and parser errors.
 - `LoxIntegrationTest.kt` - Tests file execution, command-line exit codes, usage errors, and interactive prompt behavior.
 
-## Running the Interpreter
+### Testing Output
+Testing output is included in `src/test/resources/output/`.
 
+- `automated-tests.txt` - Contains the results from the complete automated test suite.
+- `expression-output.txt` - Contains the output produced by running `expression.lox` through the interpreter.
+
+## Running the Interpreter
+### Run from the Command Line
 Start the Lox interpreter with:
 ```bash
 ./gradlew run --console=plain
 ```
-
 Enter one Lox expression at a time into the prompt. Press `Ctrl+D` to exit.
 
 ### Run a Lox Source File
@@ -99,48 +109,41 @@ For example, the Chapter 6 sample file can be run with:
 ./gradlew run --args="src/test/resources/expression.lox"
 ```
 
-The sample file contains:
-```lox
-!(1 + 2 > 3)
-```
-
-Expected output:
-```text
-(! (group (> (+ 1.0 2.0) 3.0)))
-```
-
 **At the Chapter 6 stage, the output is the parsed expression tree. Expression evaluation is not implemented yet.**
 
 ## Project Structure
 
 ```text
-src/
-├── main/
-│   └── kotlin/
-│       ├── lox/                       # Main Lox interpreter source code
-│       │   ├── AstPrinter.kt          # Prints expression trees
-│       │   ├── Expr.kt                # AST expression classes
-│       │   ├── Lox.kt                 # Main entry point for the interpreter
-│       │   ├── Parser.kt              # Parses tokens into expression trees
-│       │   ├── Scanner.kt             # Scans Lox source code into tokens
-│       │   ├── Token.kt               # Represents individual tokens
-│       │   └── TokenType.kt           # Defines the different token types
-│       └── tool/
-│           └── GenerateAst.kt          # Generates the AST expression classes
-│   
-│
-└── test/
-    ├── kotlin/
-    │   ├── lox/                        # Tests for the interpreter
-    │   │   ├── AstPrinterTest.kt
-    │   │   ├── ExprTest.kt
-    │   │   ├── LoxIntegrationTest.kt
-    │   │   ├── LoxTest.kt
-    │   │   ├── ParserTest.kt
-    │   │   └── ScannerTest.kt
-    │   └── tool/
-    │       └── GenerateAstTest.kt       # Tests the AST generator
-    └── resources/                       # Lox files used for testing
-        ├── expression.lox
-        └── invalid.lox
+lox-interpreter/
+├── README.md
+└── src/
+    ├── main/
+    │   └── kotlin/
+    │       ├── lox/                        # Main Lox interpreter source code
+    │       │   ├── AstPrinter.kt           # Prints expression trees
+    │       │   ├── Expr.kt                 # AST expression classes
+    │       │   ├── Lox.kt                  # Main entry point for the interpreter
+    │       │   ├── Parser.kt               # Parses tokens into expression trees
+    │       │   ├── Scanner.kt              # Scans Lox source code into tokens
+    │       │   ├── Token.kt                # Represents individual tokens
+    │       │   └── TokenType.kt            # Defines the different token types
+    │       └── tool/
+    │           └── GenerateAst.kt          # Generates the AST expression classes
+    └── test/
+        ├── kotlin/
+        │   ├── lox/                        # Tests for the interpreter
+        │   │   ├── AstPrinterTest.kt
+        │   │   ├── ExprTest.kt
+        │   │   ├── LoxIntegrationTest.kt
+        │   │   ├── LoxTest.kt
+        │   │   ├── ParserTest.kt
+        │   │   └── ScannerTest.kt
+        │   └── tool/
+        │       └── GenerateAstTest.kt       # Tests the AST generator
+        └── resources/                       # Test resources and output
+            ├── expression.lox
+            ├── invalid.lox
+            └── output/
+                ├── automated-tests.txt     # Automated test suite results
+                └── expression-output.txt   # Sample interpreter output
 ```

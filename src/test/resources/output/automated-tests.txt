@@ -1,0 +1,132 @@
+Reusing configuration cache.
+
+
+AstPrinterTest > printsUnaryExpressions() PASSED
+
+AstPrinterTest > printsGroupingExpressions() PASSED
+
+AstPrinterTest > printsLiterals() PASSED
+
+AstPrinterTest > printsNestedExpression() PASSED
+
+AstPrinterTest > printsBinaryOperators() PASSED
+
+AstPrinterTest > printsBinaryExpressions() PASSED
+
+ExprTest > unaryStoresOperatorsAndExpressions() PASSED
+
+ExprTest > groupingAcceptsVisitor() PASSED
+
+ExprTest > binaryStoresOperators() PASSED
+
+ExprTest > literalAcceptsVisitor() PASSED
+
+ExprTest > groupingStoresExpressions() PASSED
+
+ExprTest > binaryStoresExpressionsAndOperator() PASSED
+
+ExprTest > literalStoresValues() PASSED
+
+ExprTest > unaryAcceptsVisitor() PASSED
+
+ExprTest > binaryAcceptsVisitor() PASSED
+
+LoxIntegrationTest > interactivePromptContinuesAfterError() PASSED
+
+LoxIntegrationTest > runsLoxFile() PASSED
+
+LoxIntegrationTest > exitsWithErrorForInvalidLoxFile() PASSED
+
+LoxIntegrationTest > exitsWithUsageErrorForTooManyArguments() PASSED
+
+LoxIntegrationTest > runsInteractivePrompt() PASSED
+
+LoxTest > reportsEndOfFileError() PASSED
+
+LoxTest > reportsLineError() PASSED
+
+LoxTest > runsBinaryExpressions() PASSED
+
+LoxTest > runsNestedExpressions() PASSED
+
+LoxTest > runsExpressionsWithCorrectPrecedence() PASSED
+
+LoxTest > runsOperatorsLeftToRight() PASSED
+
+LoxTest > runsUnaryExpressions() PASSED
+
+LoxTest > reportsTokenError() PASSED
+
+LoxTest > runsGroupedExpressions() PASSED
+
+LoxTest > runsLiteralExpressions() PASSED
+
+ParserTest > rejectsInvalidExpressions() PASSED
+
+ParserTest > parsesNestedUnaryExpressions() PASSED
+
+ParserTest > parsesOperatorsLeftToRight() PASSED
+
+ParserTest > parsesLiterals() PASSED
+
+ParserTest > parsesTermExpressions() PASSED
+
+ParserTest > parsesEqualityExpressions() PASSED
+
+ParserTest > rejectsMissingClosingParenthesis() PASSED
+
+ParserTest > parsesUnaryExpressions() PASSED
+
+ParserTest > parsesComparisonExpressions() PASSED
+
+ParserTest > parsesNestedExpressions() PASSED
+
+ParserTest > parsesGroupingPrecedence() PASSED
+
+ParserTest > parsesGroupingExpressions() PASSED
+
+ParserTest > parsesFactorExpressions() PASSED
+
+ParserTest > parsesOperatorPrecedence() PASSED
+
+ScannerTest > scansTokens() PASSED
+
+ScannerTest > tracksLineNumbers() PASSED
+
+ScannerTest > ignoresComments() PASSED
+
+ScannerTest > scansLoxSource() PASSED
+
+ScannerTest > rejectsUnexpectedCharacter() PASSED
+
+ScannerTest > scansStrings() PASSED
+
+ScannerTest > ignoresWhitespace() PASSED
+
+ScannerTest > rejectsUnterminatedString() PASSED
+
+ScannerTest > scansKeywords() PASSED
+
+ScannerTest > scansDecimals() PASSED
+
+ScannerTest > scansIntegers() PASSED
+
+ScannerTest > scansEmptySource() PASSED
+
+ScannerTest > scansIdentifiers() PASSED
+
+ScannerTest > identifierCannotStartWithNumber() PASSED
+
+GenerateAstTest > generatesExpressionFields() PASSED
+
+GenerateAstTest > generatesVisitorMethods() PASSED
+
+GenerateAstTest > generatesAcceptMethods() PASSED
+
+GenerateAstTest > generatesExpressionClasses() PASSED
+
+GenerateAstTest > generatesExprFile() PASSED
+
+BUILD SUCCESSFUL in 2s
+6 actionable tasks: 6 executed
+Configuration cache entry reused.
