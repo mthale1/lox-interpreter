@@ -23,7 +23,7 @@ java {
 }
 
 application {
-    mainClass = "lox.LoxKt"
+    mainClass = "lox.Lox"
 }
 
 tasks.named<JavaExec>("run") {

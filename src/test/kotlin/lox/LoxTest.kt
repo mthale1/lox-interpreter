@@ -158,45 +158,81 @@ class LoxTest {
     @Test
     fun reportsLineError() {
         assertError("[line 3] Error: Test error.") {
-            error(3, "Test error.")
+            Lox.error(3, "Test error.")
         }
 
         assertError("[line 1] Error: Unexpected character.") {
-            error(1, "Unexpected character.")
+            Lox.error(1, "Unexpected character.")
         }
 
         assertError("[line 25] Error: Invalid syntax.") {
-            error(25, "Invalid syntax.")
+            Lox.error(25, "Invalid syntax.")
         }
     }
 
     @Test
     fun reportsTokenError() {
         assertError("[line 5] Error at '+': Test error.") {
-            error(Token(TokenType.PLUS, "+", null, 5), "Test error.")
+            Lox.error(Token(TokenType.PLUS, "+", null, 5), "Test error.")
         }
 
         assertError("[line 2] Error at '*': Unexpected token.") {
-            error(Token(TokenType.STAR, "*", null, 2), "Unexpected token.")
+            Lox.error(Token(TokenType.STAR, "*", null, 2), "Unexpected token.")
         }
 
         assertError("[line 10] Error at '123': Invalid expression.") {
-            error(Token(TokenType.NUMBER, "123", 123.0, 10), "Invalid expression.")
+            Lox.error(Token(TokenType.NUMBER, "123", 123.0, 10), "Invalid expression.")
         }
     }
 
     @Test
     fun reportsEndOfFileError() {
         assertError("[line 7] Error at end: Expect expression.") {
-            error(Token(TokenType.EOF, "", null, 7), "Expect expression.")
+            Lox.error(Token(TokenType.EOF, "", null, 7), "Expect expression.")
         }
 
         assertError("[line 1] Error at end: Unexpected end.") {
-            error(Token(TokenType.EOF, "", null, 1), "Unexpected end.")
+            Lox.error(Token(TokenType.EOF, "", null, 1), "Unexpected end.")
         }
 
         assertError("[line 15] Error at end: Missing expression.") {
-            error(Token(TokenType.EOF, "", null, 15), "Missing expression.")
+            Lox.error(Token(TokenType.EOF, "", null, 15), "Missing expression.")
+        }
+    }
+
+    @Test
+    fun reportsRuntimeError() {
+        assertError(
+            "Operands must be numbers.\n[line 4]"
+        ) {
+            Lox.runtimeError(
+                RuntimeError(
+                    Token(TokenType.MINUS, "-", null, 4),
+                    "Operands must be numbers."
+                )
+            )
+        }
+
+        assertError(
+            "Operand must be a number.\n[line 7]"
+        ) {
+            Lox.runtimeError(
+                RuntimeError(
+                    Token(TokenType.MINUS, "-", null, 7),
+                    "Operand must be a number."
+                )
+            )
+        }
+
+        assertError(
+            "Operands must be two numbers or two strings.\n[line 12]"
+        ) {
+            Lox.runtimeError(
+                RuntimeError(
+                    Token(TokenType.PLUS, "+", null, 12),
+                    "Operands must be two numbers or two strings."
+                )
+            )
         }
     }
 

@@ -6,30 +6,27 @@ A Lox interpreter implemented in Kotlin based on the interpreter developed in *C
 
 ## Current Implementation
 
-The interpreter currently includes the functionality implemented through Chapters 4–6.
+The interpreter currently includes the functionality implemented through Chapter 7.
 
 At this stage, the interpreter can:
 
-- Read Lox source code from a file or through the interactive prompt
+- Read Lox source code from a file or interactive prompt
 - Scan source code into tokens
-- Recognize literals, keywords, identifiers, operators, and punctuation
-- Ignore whitespace and comments
-- Report scanning errors
-- Represent expressions using an Abstract Syntax Tree (AST)
-- Parse expressions with the correct precedence and associativity
-- Report syntax errors during parsing
-- Print parsed expression trees using `AstPrinter`
+- Parse tokens into expression syntax trees
+- Evaluate Lox expressions
+- Perform arithmetic, comparison, equality, and string operations
+- Apply Lox truthiness rules
+- Report scanning, syntax, and runtime errors
 
 ### Limitations
+The interpreter can scan, parse, and evaluate expressions, but statements and
+other features introduced in later chapters are not implemented yet.
 
-This implementation currently includes functionality through Chapter 6 of *Crafting Interpreters*.   
-Expressions can be scanned and parsed into an AST, but expression evaluation and execution are not implemented yet.
+## Chapter 7 - Evaluating Expressions Implementation
+Chapter 7 adds `Interpreter.kt` for evaluating expression syntax trees produced by the parser
+and `RuntimeError.kt` for handling errors that occur during evaluation.
 
-## Chapter 6 - Parsing Expressions Implementation
-Chapter 6 adds `Parser.kt`, which uses recursive descent parsing to convert tokens 
-from the scanner into expression syntax trees.
-
-The parser supports:
+The interpreter supports:
 
 - Literals - numbers, strings, booleans, and `nil`
 - Grouping with parentheses
@@ -37,10 +34,15 @@ The parser supports:
 - Arithmetic operators - `*`, `/`, `+`, and `-`
 - Comparison operators - `<`, `<=`, `>`, and `>=`
 - Equality operators - `==` and `!=`
-- Operator precedence and associativity
-- Syntax error reporting
+- String concatenation using `+`
+- Lox truthiness rules
+- Runtime type checking
+- Runtime error reporting
 
-`AstPrinter.kt` prints the parsed expression tree in a parenthesized format.
+`RuntimeError.kt` represents errors that occur while evaluating expressions. Runtime
+errors are reported with the source line where the error occurred.
+
+Expression results are now printed to the console instead of printing the AST.
 
 ---
 
@@ -76,13 +78,15 @@ To clean the previous build and rerun all tests:
 
 The automated tests are organized into the following files:
 - `ScannerTest.kt` - Tests scanning, tokenization, literals, keywords, comments, line tracking, and scanner errors.
-- `LoxTest.kt` - Tests expressions through the Scanner -> Parser -> AstPrinter pipeline and tests Lox error reporting.
+- `LoxTest.kt` - Tests parsed expressions and Lox syntax and runtime error reporting.
 - `ExprTest.kt` - Tests the generated AST expression classes, including stored values, operators, 
 expressions, and Visitor routing.
 - `AstPrinterTest.kt` - Tests the parenthesized string representation of AST expressions.
 - `GenerateAstTest.kt` - Tests AST generation, including expression classes, fields, Visitor methods, and `accept()` methods.
 - `ParserTest.kt` - Tests expression parsing, precedence, associativity, grouping, nesting, and parser errors.
-- `LoxIntegrationTest.kt` - Tests file execution, command-line exit codes, usage errors, and interactive prompt behavior.
+- `InterpreterTest.kt` - Tests expression evaluation, literals, grouping, unary and binary operators, truthiness, equality, nested expressions, and runtime errors.
+- `LoxIntegrationTest.kt` - Tests the full Scanner -> Parser -> Interpreter pipeline, including file execution, 
+expression evaluation, output formatting, command-line exit codes, syntax errors, runtime errors, and interactive prompt behavior.
 
 ### Testing Output
 Testing output is included in `src/test/resources/output/`.
@@ -104,12 +108,13 @@ To run a Lox source file:
 ./gradlew run --args="path/to/file.lox"
 ```
 
-For example, the Chapter 6 sample file can be run with:
+A sample file can be run with:
 ```bash
 ./gradlew run --args="src/test/resources/expression.lox"
 ```
 
-**At the Chapter 6 stage, the output is the parsed expression tree. Expression evaluation is not implemented yet.**
+**Note:** At the Chapter 7 stage, a Lox source file should contain only one expression. 
+Multiple expressions in the same file are not supported yet.
 
 ## Project Structure
 
@@ -117,9 +122,11 @@ For example, the Chapter 6 sample file can be run with:
 lox-interpreter/
 ├── README.md
 └── src/
-    ├── main/
+    ├── main/                               
     │   └── kotlin/
     │       ├── lox/                        # Main Lox interpreter source code
+    │       │   ├── Interpreter.kt          # Evaluates expression trees
+    │       │   ├── RuntimeError.kt         # Represents runtime evaluation errors
     │       │   ├── AstPrinter.kt           # Prints expression trees
     │       │   ├── Expr.kt                 # AST expression classes
     │       │   ├── Lox.kt                  # Main entry point for the interpreter
@@ -132,6 +139,7 @@ lox-interpreter/
     └── test/
         ├── kotlin/
         │   ├── lox/                        # Tests for the interpreter
+        │   │   ├── InterpreterTest.kt      
         │   │   ├── AstPrinterTest.kt
         │   │   ├── ExprTest.kt
         │   │   ├── LoxIntegrationTest.kt
@@ -139,10 +147,11 @@ lox-interpreter/
         │   │   ├── ParserTest.kt
         │   │   └── ScannerTest.kt
         │   └── tool/
-        │       └── GenerateAstTest.kt       # Tests the AST generator
-        └── resources/                       # Test resources and output
-            ├── expression.lox
-            ├── invalid.lox
+        │       └── GenerateAstTest.kt      # Tests the AST generator
+        └── resources/                      # Test resources and output
+            ├── expression.lox              # Valid expression used to test file execution
+            ├── invalid.lox                 # Invalid syntax used to test syntax error handling
+            ├── runtime_error.lox           # Valid syntax that produces a runtime error
             └── output/
                 ├── automated-tests.txt     # Automated test suite results
                 └── expression-output.txt   # Sample interpreter output

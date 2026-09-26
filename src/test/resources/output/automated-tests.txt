@@ -31,6 +31,26 @@ ExprTest > unaryAcceptsVisitor() PASSED
 
 ExprTest > binaryAcceptsVisitor() PASSED
 
+InterpreterTest > evaluatesGrouping() PASSED
+
+InterpreterTest > concatenatesStrings() PASSED
+
+InterpreterTest > throwsRuntimeErrorsForInvalidOperands() PASSED
+
+InterpreterTest > evaluatesLiterals() PASSED
+
+InterpreterTest > evaluatesNestedExpressions() PASSED
+
+InterpreterTest > evaluatesUnaryExpressions() PASSED
+
+InterpreterTest > evaluatesArithmeticExpressions() PASSED
+
+InterpreterTest > evaluatesComparisonExpressions() PASSED
+
+InterpreterTest > evaluatesEqualityExpressions() PASSED
+
+LoxIntegrationTest > stringifiesValuesCorrectly() PASSED
+
 LoxIntegrationTest > interactivePromptContinuesAfterError() PASSED
 
 LoxIntegrationTest > runsLoxFile() PASSED
@@ -40,6 +60,8 @@ LoxIntegrationTest > exitsWithErrorForInvalidLoxFile() PASSED
 LoxIntegrationTest > exitsWithUsageErrorForTooManyArguments() PASSED
 
 LoxIntegrationTest > runsInteractivePrompt() PASSED
+
+LoxIntegrationTest > exitsWithRuntimeError() PASSED
 
 LoxTest > reportsEndOfFileError() PASSED
 
@@ -54,6 +76,8 @@ LoxTest > runsExpressionsWithCorrectPrecedence() PASSED
 LoxTest > runsOperatorsLeftToRight() PASSED
 
 LoxTest > runsUnaryExpressions() PASSED
+
+LoxTest > reportsRuntimeError() PASSED
 
 LoxTest > reportsTokenError() PASSED
 
@@ -127,6 +151,6 @@ GenerateAstTest > generatesExpressionClasses() PASSED
 
 GenerateAstTest > generatesExprFile() PASSED
 
-BUILD SUCCESSFUL in 2s
+BUILD SUCCESSFUL in 7s
 6 actionable tasks: 6 executed
 Configuration cache entry reused.

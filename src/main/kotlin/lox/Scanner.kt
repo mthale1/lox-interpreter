@@ -81,7 +81,7 @@ class Scanner(private val source: String) {
                 } else if (isAlpha(c)) {
                     identifier()
                 } else {
-                    error(line, "Unexpected character.")
+                    Lox.error(line, "Unexpected character.")
                 }
             }
         }
@@ -116,7 +116,7 @@ class Scanner(private val source: String) {
         }
 
         if (isAtEnd()) {
-            error(line, "Unterminated string.")
+            Lox.error(line, "Unterminated string.")
             return
         }
 

@@ -12,14 +12,14 @@ class LoxIntegrationTest {
             "java",
             "-cp",
             System.getProperty("java.class.path"),
-            "lox.LoxKt",
+            "lox.Lox",
             "src/test/resources/expression.lox"
         ).start()
 
         val output = process.inputStream.bufferedReader().readText()
         val exitCode = process.waitFor()
         assertEquals(0, exitCode)
-        assertEquals("(! (group (> (+ 1.0 2.0) 3.0)))", output.trim())
+        assertEquals("true", output.trim())
     }
 
     @Test
@@ -28,7 +28,7 @@ class LoxIntegrationTest {
             "java",
             "-cp",
             System.getProperty("java.class.path"),
-            "lox.LoxKt",
+            "lox.Lox",
             "src/test/resources/invalid.lox"
         ).start()
 
@@ -43,7 +43,7 @@ class LoxIntegrationTest {
             "java",
             "-cp",
             System.getProperty("java.class.path"),
-            "lox.LoxKt",
+            "lox.Lox",
             "one.lox",
             "two.lox"
         ).start()
@@ -61,7 +61,7 @@ class LoxIntegrationTest {
             "java",
             "-cp",
             System.getProperty("java.class.path"),
-            "lox.LoxKt"
+            "lox.Lox"
         ).start()
 
         process.outputStream.bufferedWriter().use { writer ->
@@ -72,7 +72,7 @@ class LoxIntegrationTest {
         val exitCode = process.waitFor()
 
         assertEquals(0, exitCode)
-        assertTrue(output.contains("(+ 1.0 (* 2.0 3.0))"))
+        assertTrue(output.contains("7"))
     }
 
     @Test
@@ -81,7 +81,7 @@ class LoxIntegrationTest {
             "java",
             "-cp",
             System.getProperty("java.class.path"),
-            "lox.LoxKt"
+            "lox.Lox"
         ).start()
 
         process.outputStream.bufferedWriter().use { writer ->
@@ -93,6 +93,48 @@ class LoxIntegrationTest {
         val exitCode = process.waitFor()
 
         assertEquals(0, exitCode)
-        assertTrue(output.contains("(+ 1.0 2.0)"))
+        assertTrue(output.contains("3"))
+    }
+
+    @Test
+    fun exitsWithRuntimeError() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/runtime_error.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(70, exitCode)
+        assertTrue(errorOutput.contains("Operands must be numbers."))
+        assertTrue(errorOutput.contains("[line 1]"))
+    }
+
+    @Test
+    fun stringifiesValuesCorrectly() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox"
+        ).start()
+
+        process.outputStream.bufferedWriter().use { writer ->
+            writer.write("5.0\n")
+            writer.write("5.25\n")
+            writer.write("nil\n")
+        }
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+        assertTrue(output.contains("5"))
+        assertTrue(output.contains("5.25"))
+        assertTrue(output.contains("nil"))
     }
 }

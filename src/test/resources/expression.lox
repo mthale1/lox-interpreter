@@ -1,4 +1,4 @@
-// Valid Chapter 6 expression used to test file execution.
-// Expected AST output: (! (group (> (+ 1.0 2.0) 3.0)))
+// Valid Chapter 7 expression used to test file execution.
+// Expected output: true
 
-!(1 + 2 > 3)
+!((10 - 2) * 3 <= 20 + 5) == false
