@@ -534,11 +534,16 @@ class InterpreterTest {
 
         val inner = Environment(outer)
 
+        val assignment = Expr.Assign(
+            name,
+            Expr.Literal(456.0)
+        )
+
+        interpreter.resolve(assignment, 1)
+
         interpreter.executeBlock(
             listOf(
-                Stmt.Expression(
-                    Expr.Assign(name, Expr.Literal(456.0))
-                )
+                Stmt.Expression(assignment)
             ),
             inner
         )
@@ -842,18 +847,23 @@ class InterpreterTest {
             1
         )
 
-        interpreter.visitFunctionStmt(
-            Stmt.Function(
-                functionName,
-                listOf(parameter),
-                listOf(
-                    Stmt.Return(
-                        Token(TokenType.RETURN, "return", null, 1),
-                        Expr.Variable(parameter)
-                    )
+        val variable = Expr.Variable(parameter)
+
+        val function = Stmt.Function(
+            functionName,
+            listOf(parameter),
+            listOf(
+                Stmt.Return(
+                    Token(TokenType.RETURN, "return", null, 1),
+                    variable
                 )
             )
         )
+
+        val resolver = Resolver(interpreter)
+        resolver.resolve(listOf(function))
+
+        interpreter.visitFunctionStmt(function)
 
         val call = Expr.Call(
             Expr.Variable(functionName),
@@ -910,22 +920,26 @@ class InterpreterTest {
             1
         )
 
+        val variable = Expr.Variable(valueName)
+
+        val functionDeclaration = Stmt.Function(
+            functionName,
+            emptyList(),
+            listOf(
+                Stmt.Return(
+                    Token(TokenType.RETURN, "return", null, 1),
+                    variable
+                )
+            )
+        )
+
         val localEnvironment = Environment(interpreter.globals)
         localEnvironment.define("a", 123.0)
 
+        interpreter.resolve(variable, 1)
+
         interpreter.executeBlock(
-            listOf(
-                Stmt.Function(
-                    functionName,
-                    emptyList(),
-                    listOf(
-                        Stmt.Return(
-                            Token(TokenType.RETURN, "return", null, 1),
-                            Expr.Variable(valueName)
-                        )
-                    )
-                )
-            ),
+            listOf(functionDeclaration),
             localEnvironment
         )
 

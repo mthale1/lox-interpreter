@@ -400,4 +400,107 @@ class LoxIntegrationTest {
         assertEquals(0, exitCode)
         assertTrue(output.contains("8"))
     }
+
+    @Test
+    fun resolverPreservesLexicalScopeInClosure() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/resolver_closure.lox"
+        ).start()
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+        assertEquals(
+            "global\nglobal",
+            output.trim()
+        )
+    }
+
+    @Test
+    fun assignsToResolvedLocalVariable() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox"
+        ).start()
+
+        process.outputStream.bufferedWriter().use { writer ->
+            writer.write("{ var a = 1; a = 2; print a; }\n")
+        }
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+        assertTrue(output.contains("2"))
+    }
+
+    @Test
+    fun exitsWithErrorForVariableInOwnInitializer() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/own_initializer.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(65, exitCode)
+        assertTrue(
+            errorOutput.contains(
+                "Can't read local variable in its own initializer."
+            )
+        )
+    }
+
+    @Test
+    fun exitsWithErrorForDuplicateLocalVariable() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/duplicate_local.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(65, exitCode)
+        assertTrue(
+            errorOutput.contains(
+                "Already a variable with this name in this scope."
+            )
+        )
+    }
+
+    @Test
+    fun exitsWithErrorForTopLevelReturn() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/top_level_return.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(65, exitCode)
+        assertTrue(
+            errorOutput.contains(
+                "Can't return from top-level code."
+            )
+        )
+    }
 }

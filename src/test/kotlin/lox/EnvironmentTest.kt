@@ -120,4 +120,39 @@ class EnvironmentTest {
         assertEquals(123.0, outer.get(name))
     }
 
+    @Test
+    fun getsVariableAtResolvedDistance() {
+        val global = Environment()
+        global.define("a", 123.0)
+
+        val local = Environment(global)
+
+        assertEquals(
+            123.0,
+            local.getAt(1, "a")
+        )
+    }
+
+    @Test
+    fun assignsVariableAtResolvedDistance() {
+        val global = Environment()
+        global.define("a", 123.0)
+
+        val local = Environment(global)
+
+        val name = Token(
+            TokenType.IDENTIFIER,
+            "a",
+            null,
+            1
+        )
+
+        local.assignAt(1, name, 456.0)
+
+        assertEquals(
+            456.0,
+            global.get(name)
+        )
+    }
+
 }

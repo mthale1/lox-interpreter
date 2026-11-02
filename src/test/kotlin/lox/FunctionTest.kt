@@ -45,6 +45,11 @@ class FunctionTest {
             )
         )
 
+        val interpreter = Interpreter()
+        val resolver = Resolver(interpreter)
+
+        resolver.resolve(listOf(declaration))
+
         val function = LoxFunction(
             declaration,
             Environment()
@@ -53,7 +58,7 @@ class FunctionTest {
         assertEquals(
             123.0,
             function.call(
-                Interpreter(),
+                interpreter,
                 listOf(123.0)
             )
         )
@@ -93,16 +98,22 @@ class FunctionTest {
             1
         )
 
+        val variable = Expr.Variable(name)
+
         val declaration = Stmt.Function(
             Token(TokenType.IDENTIFIER, "getA", null, 1),
             emptyList(),
             listOf(
                 Stmt.Return(
                     Token(TokenType.RETURN, "return", null, 1),
-                    Expr.Variable(name)
+                    variable
                 )
             )
         )
+
+        val interpreter = Interpreter()
+
+        interpreter.resolve(variable, 1)
 
         val function = LoxFunction(
             declaration,
@@ -112,7 +123,7 @@ class FunctionTest {
         assertEquals(
             123.0,
             function.call(
-                Interpreter(),
+                interpreter,
                 emptyList()
             )
         )

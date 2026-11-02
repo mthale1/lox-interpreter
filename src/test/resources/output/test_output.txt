@@ -17,3 +17,5 @@ returned early
 1
 2
 8
+global
+global

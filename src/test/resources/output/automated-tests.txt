@@ -38,11 +38,15 @@ EnvironmentTest > getsVariableFromOuterEnvironment() PASSED
 
 EnvironmentTest > getUndefinedVariableThrowsError() PASSED
 
+EnvironmentTest > assignsVariableAtResolvedDistance() PASSED
+
 EnvironmentTest > definesAndGetsVariable() PASSED
 
 EnvironmentTest > innerVariableOverridesOuterVariable() PASSED
 
 EnvironmentTest > assignUndefinedVariableThrowsError() PASSED
+
+EnvironmentTest > getsVariableAtResolvedDistance() PASSED
 
 EnvironmentTest > getsVariableThroughMultipleOuterEnvironments() PASSED
 
@@ -196,15 +200,21 @@ LoxIntegrationTest > runsBlockScope() PASSED
 
 LoxIntegrationTest > stringifiesValuesCorrectly() PASSED
 
+LoxIntegrationTest > exitsWithErrorForVariableInOwnInitializer() PASSED
+
 LoxIntegrationTest > runsUserDefinedFunction() PASSED
 
 LoxIntegrationTest > runsWhileLoops() PASSED
 
 LoxIntegrationTest > runsVariableDeclarationsAndAssignments() PASSED
 
+LoxIntegrationTest > exitsWithErrorForDuplicateLocalVariable() PASSED
+
 LoxIntegrationTest > interactivePromptContinuesAfterError() PASSED
 
 LoxIntegrationTest > runsLoxFile() PASSED
+
+LoxIntegrationTest > exitsWithErrorForTopLevelReturn() PASSED
 
 LoxIntegrationTest > returnExitsFunctionEarly() PASSED
 
@@ -218,9 +228,13 @@ LoxIntegrationTest > runsIfElseStatements() PASSED
 
 LoxIntegrationTest > exitsWithUsageErrorForTooManyArguments() PASSED
 
+LoxIntegrationTest > resolverPreservesLexicalScopeInClosure() PASSED
+
 LoxIntegrationTest > runsRecursiveFunction() PASSED
 
 LoxIntegrationTest > runsForLoops() PASSED
+
+LoxIntegrationTest > assignsToResolvedLocalVariable() PASSED
 
 LoxIntegrationTest > exitsWithErrorForUndefinedVariable() PASSED
 
@@ -378,6 +392,22 @@ ParserTest > parsesOperatorPrecedence() PASSED
 
 ParserTest > rejectsMissingVariableInitializer() PASSED
 
+ResolverTest > allowsSameVariableNameInDifferentScopes() PASSED
+
+ResolverTest > rejectsVariableInOwnInitializer() PASSED
+
+ResolverTest > rejectsDuplicateVariableInSameScope() PASSED
+
+ResolverTest > allowsVariableShadowingInNestedScope() PASSED
+
+ResolverTest > rejectsReturnFromTopLevelCode() PASSED
+
+ResolverTest > resolvesFunctionParameters() PASSED
+
+ResolverTest > allowsReturnInsideFunction() PASSED
+
+ResolverTest > resolvesNestedFunctionScopes() PASSED
+
 ScannerTest > scansTokens() PASSED
 
 ScannerTest > tracksLineNumbers() PASSED
@@ -466,6 +496,6 @@ GenerateAstTest > generatesStatementFields() PASSED
 
 GenerateAstTest > generatesStatementAcceptMethods() PASSED
 
-BUILD SUCCESSFUL in 7s
+BUILD SUCCESSFUL in 9s
 5 actionable tasks: 5 executed
 Configuration cache entry reused.
