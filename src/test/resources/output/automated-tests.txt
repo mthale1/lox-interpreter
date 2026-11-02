@@ -1,11 +1,30 @@
 Reusing configuration cache.
+> Task :checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :processResources NO-SOURCE
+> Task :processTestResources
+> Task :compileKotlin
+> Task :compileJava NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar
+> Task :compileTestKotlin
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses
 
+> Task :test
 
 AstPrinterTest > printsUnaryExpressions() PASSED
 
+AstPrinterTest > printsLogicalExpressions() PASSED
+
 AstPrinterTest > printsGroupingExpressions() PASSED
 
+AstPrinterTest > printsVariableExpressions() PASSED
+
+AstPrinterTest > printsChainedAssignments() PASSED
+
 AstPrinterTest > printsLiterals() PASSED
+
+AstPrinterTest > printsAssignmentExpressions() PASSED
 
 AstPrinterTest > printsNestedExpression() PASSED
 
@@ -13,7 +32,31 @@ AstPrinterTest > printsBinaryOperators() PASSED
 
 AstPrinterTest > printsBinaryExpressions() PASSED
 
+EnvironmentTest > getsVariableFromOuterEnvironment() PASSED
+
+EnvironmentTest > getUndefinedVariableThrowsError() PASSED
+
+EnvironmentTest > definesAndGetsVariable() PASSED
+
+EnvironmentTest > innerVariableOverridesOuterVariable() PASSED
+
+EnvironmentTest > assignUndefinedVariableThrowsError() PASSED
+
+EnvironmentTest > getsVariableThroughMultipleOuterEnvironments() PASSED
+
+EnvironmentTest > assignsVariable() PASSED
+
+EnvironmentTest > assignsVariableInOuterEnvironment() PASSED
+
+EnvironmentTest > definesAndGetsNilVariable() PASSED
+
+EnvironmentTest > assignsInnerVariableInsteadOfOuterVariable() PASSED
+
+ExprTest > assignStoresNamesAndValues() PASSED
+
 ExprTest > unaryStoresOperatorsAndExpressions() PASSED
+
+ExprTest > variableAcceptsVisitor() PASSED
 
 ExprTest > groupingAcceptsVisitor() PASSED
 
@@ -23,45 +66,123 @@ ExprTest > literalAcceptsVisitor() PASSED
 
 ExprTest > groupingStoresExpressions() PASSED
 
+ExprTest > variableStoresNames() PASSED
+
+ExprTest > logicalStoresExpressionsAndOperator() PASSED
+
+ExprTest > logicalAcceptsVisitor() PASSED
+
 ExprTest > binaryStoresExpressionsAndOperator() PASSED
 
 ExprTest > literalStoresValues() PASSED
+
+ExprTest > assignAcceptsVisitor() PASSED
 
 ExprTest > unaryAcceptsVisitor() PASSED
 
 ExprTest > binaryAcceptsVisitor() PASSED
 
+InterpreterTest > ifExecutesElseBranchWhenConditionIsFalse() PASSED
+
+InterpreterTest > evaluatesGreaterThanOrEqual() PASSED
+
+InterpreterTest > evaluatesDivision() PASSED
+
+InterpreterTest > whileRepeatsUntilConditionIsFalse() PASSED
+
+InterpreterTest > evaluatesInequality() PASSED
+
+InterpreterTest > accessesOuterVariablesInsideBlocks() PASSED
+
 InterpreterTest > evaluatesGrouping() PASSED
+
+InterpreterTest > evaluatesEquality() PASSED
 
 InterpreterTest > concatenatesStrings() PASSED
 
-InterpreterTest > throwsRuntimeErrorsForInvalidOperands() PASSED
+InterpreterTest > evaluatesUnaryMinus() PASSED
+
+InterpreterTest > logicalAndSkipsRightWhenLeftIsFalse() PASSED
+
+InterpreterTest > evaluatesSubtraction() PASSED
+
+InterpreterTest > evaluatesLogicalOr() PASSED
+
+InterpreterTest > additionRejectsMixedOperandTypes() PASSED
 
 InterpreterTest > evaluatesLiterals() PASSED
 
+InterpreterTest > restoresOuterEnvironmentAfterBlock() PASSED
+
+InterpreterTest > whileDoesNotExecuteWhenConditionIsFalse() PASSED
+
 InterpreterTest > evaluatesNestedExpressions() PASSED
 
-InterpreterTest > evaluatesUnaryExpressions() PASSED
+InterpreterTest > evaluatesUninitializedVariables() PASSED
 
-InterpreterTest > evaluatesArithmeticExpressions() PASSED
+InterpreterTest > evaluatesAssignmentExpressions() PASSED
 
-InterpreterTest > evaluatesComparisonExpressions() PASSED
+InterpreterTest > logicalOrSkipsRightWhenLeftIsTrue() PASSED
 
-InterpreterTest > evaluatesEqualityExpressions() PASSED
+InterpreterTest > evaluatesLessThan() PASSED
+
+InterpreterTest > throwsRuntimeErrorWhenAssigningUndefinedVariable() PASSED
+
+InterpreterTest > evaluatesMultiplication() PASSED
+
+InterpreterTest > evaluatesLogicalAnd() PASSED
+
+InterpreterTest > evaluatesLogicalNot() PASSED
+
+InterpreterTest > unaryMinusRejectsNonNumberOperand() PASSED
+
+InterpreterTest > evaluatesVariables() PASSED
+
+InterpreterTest > evaluatesAddition() PASSED
+
+InterpreterTest > ifExecutesThenBranchWhenConditionIsTrue() PASSED
+
+InterpreterTest > binaryOperatorsRejectNonNumberOperands() PASSED
+
+InterpreterTest > evaluatesLessThanOrEqual() PASSED
+
+InterpreterTest > evaluatesGreaterThan() PASSED
+
+InterpreterTest > assignmentsUpdateVariables() PASSED
+
+InterpreterTest > ifDoesNothingWhenConditionIsFalseWithoutElse() PASSED
+
+InterpreterTest > throwsRuntimeErrorForUndefinedVariable() PASSED
+
+LoxIntegrationTest > runsBlockScope() PASSED
 
 LoxIntegrationTest > stringifiesValuesCorrectly() PASSED
+
+LoxIntegrationTest > runsWhileLoops() PASSED
+
+LoxIntegrationTest > runsVariableDeclarationsAndAssignments() PASSED
 
 LoxIntegrationTest > interactivePromptContinuesAfterError() PASSED
 
 LoxIntegrationTest > runsLoxFile() PASSED
 
+LoxIntegrationTest > runsLogicalExpressions() PASSED
+
 LoxIntegrationTest > exitsWithErrorForInvalidLoxFile() PASSED
 
+LoxIntegrationTest > runsIfElseStatements() PASSED
+
 LoxIntegrationTest > exitsWithUsageErrorForTooManyArguments() PASSED
+
+LoxIntegrationTest > runsForLoops() PASSED
+
+LoxIntegrationTest > exitsWithErrorForUndefinedVariable() PASSED
 
 LoxIntegrationTest > runsInteractivePrompt() PASSED
 
 LoxIntegrationTest > exitsWithRuntimeError() PASSED
+
+LoxIntegrationTest > loxFileProducesExpectedOutput() PASSED
 
 LoxTest > reportsEndOfFileError() PASSED
 
@@ -85,19 +206,89 @@ LoxTest > runsGroupedExpressions() PASSED
 
 LoxTest > runsLiteralExpressions() PASSED
 
+ParserTest > forStatementUsesConditionForWhile() PASSED
+
+ParserTest > parsesAssignmentInsideBlock() PASSED
+
+ParserTest > parsesVariableExpression() PASSED
+
+ParserTest > parsesAssignmentToUninitializedVariable() PASSED
+
+ParserTest > parsesAssignmentWithExpressionValue() PASSED
+
+ParserTest > parsesIfStatement() PASSED
+
 ParserTest > rejectsInvalidExpressions() PASSED
+
+ParserTest > rejectsMissingSemicolon() PASSED
+
+ParserTest > parsesEmptyBlock() PASSED
 
 ParserTest > parsesNestedUnaryExpressions() PASSED
 
+ParserTest > parsesForStatementWithoutIncrement() PASSED
+
+ParserTest > parsesForStatementWithoutInitializer() PASSED
+
+ParserTest > rejectsMissingClosingBrace() PASSED
+
+ParserTest > parsesIfElseStatement() PASSED
+
 ParserTest > parsesOperatorsLeftToRight() PASSED
+
+ParserTest > parsesBlockWithMultipleStatements() PASSED
+
+ParserTest > parsesLogicalOrExpression() PASSED
+
+ParserTest > parsesNestedBlocks() PASSED
 
 ParserTest > parsesLiterals() PASSED
 
+ParserTest > continuesParsingAfterInvalidDeclaration() PASSED
+
 ParserTest > parsesTermExpressions() PASSED
+
+ParserTest > rejectsMissingClosingParenthesisAfterIfCondition() PASSED
+
+ParserTest > parsesExpressionStatement() PASSED
+
+ParserTest > forStatementAddsIncrementAfterBody() PASSED
+
+ParserTest > rejectsInvalidAssignmentTarget() PASSED
+
+ParserTest > parsesWhileWithExpressionCondition() PASSED
+
+ParserTest > parsesVariableDeclaration() PASSED
+
+ParserTest > parsesLogicalAndExpression() PASSED
+
+ParserTest > rejectsMissingClosingParenthesisAfterForClause() PASSED
+
+ParserTest > parsesMultipleStatements() PASSED
+
+ParserTest > parsesPrintStatement() PASSED
 
 ParserTest > parsesEqualityExpressions() PASSED
 
+ParserTest > parsesForStatement() PASSED
+
+ParserTest > parsesLogicalOperatorPrecedence() PASSED
+
+ParserTest > elseAttachesToNearestIf() PASSED
+
+ParserTest > parsesAssignmentExpression() PASSED
+
 ParserTest > rejectsMissingClosingParenthesis() PASSED
+
+ParserTest > rejectsMissingClosingParenthesisAfterWhileCondition() PASSED
+
+ParserTest > rejectsMissingVariableName() PASSED
+
+ParserTest > parsesBlockStatement() PASSED
+
+ParserTest > parsesVariableDeclarationWithoutInitializer() PASSED
+
+ParserTest > parsesForStatementWithExpressionInitializer() PASSED
 
 ParserTest > parsesUnaryExpressions() PASSED
 
@@ -105,7 +296,15 @@ ParserTest > parsesComparisonExpressions() PASSED
 
 ParserTest > parsesNestedExpressions() PASSED
 
+ParserTest > parsesChainedAssignment() PASSED
+
 ParserTest > parsesGroupingPrecedence() PASSED
+
+ParserTest > forStatementWithoutConditionUsesTrue() PASSED
+
+ParserTest > parsesWhileStatement() PASSED
+
+ParserTest > parsesWhileWithBlockBody() PASSED
 
 ParserTest > parsesGroupingExpressions() PASSED
 
@@ -113,9 +312,13 @@ ParserTest > parsesFactorExpressions() PASSED
 
 ParserTest > parsesOperatorPrecedence() PASSED
 
+ParserTest > rejectsMissingVariableInitializer() PASSED
+
 ScannerTest > scansTokens() PASSED
 
 ScannerTest > tracksLineNumbers() PASSED
+
+ScannerTest > rejectsMultilineUnterminatedString() PASSED
 
 ScannerTest > ignoresComments() PASSED
 
@@ -141,6 +344,36 @@ ScannerTest > scansIdentifiers() PASSED
 
 ScannerTest > identifierCannotStartWithNumber() PASSED
 
+StmtTest > whileAcceptsVisitor() PASSED
+
+StmtTest > varStoresNamesAndInitializers() PASSED
+
+StmtTest > printAcceptsVisitor() PASSED
+
+StmtTest > expressionAcceptsVisitor() PASSED
+
+StmtTest > blockStoresStatements() PASSED
+
+StmtTest > printStoresExpressions() PASSED
+
+StmtTest > ifAcceptsVisitor() PASSED
+
+StmtTest > blockAcceptsVisitor() PASSED
+
+StmtTest > blockStoresEmptyStatementList() PASSED
+
+StmtTest > varAcceptsVisitor() PASSED
+
+StmtTest > ifStoresConditionAndBranches() PASSED
+
+StmtTest > varStoresNullInitializer() PASSED
+
+StmtTest > ifStoresNullElseBranch() PASSED
+
+StmtTest > expressionStoresExpressions() PASSED
+
+StmtTest > whileStoresConditionAndBody() PASSED
+
 GenerateAstTest > generatesExpressionFields() PASSED
 
 GenerateAstTest > generatesVisitorMethods() PASSED
@@ -151,6 +384,6 @@ GenerateAstTest > generatesExpressionClasses() PASSED
 
 GenerateAstTest > generatesExprFile() PASSED
 
-BUILD SUCCESSFUL in 7s
-6 actionable tasks: 6 executed
+BUILD SUCCESSFUL in 5s
+5 actionable tasks: 5 executed
 Configuration cache entry reused.

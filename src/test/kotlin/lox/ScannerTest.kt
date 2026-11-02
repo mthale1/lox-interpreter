@@ -213,6 +213,19 @@ class ScannerTest {
     }
 
     @Test
+    fun rejectsMultilineUnterminatedString() {
+        lateinit var tokens: List<Token>
+
+        val error = captureError {
+            tokens = Scanner("\"hello\nworld").scanTokens()
+        }
+
+        assertEquals("[line 2] Error: Unterminated string.", error)
+        assertEquals(TokenType.EOF, tokens[0].type)
+        assertEquals(1, tokens.size)
+    }
+
+    @Test
     fun rejectsUnexpectedCharacter() {
         lateinit var tokens: List<Token>
 

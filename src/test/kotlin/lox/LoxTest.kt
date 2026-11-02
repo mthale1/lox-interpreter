@@ -8,10 +8,11 @@ import kotlin.test.assertEquals
 class LoxTest {
 
     private fun runExpression(source: String): String {
-        val tokens = Scanner(source).scanTokens()
-        val expression = Parser(tokens).parse()
+        val tokens = Scanner("$source;").scanTokens()
+        val statements = Parser(tokens).parse()
 
-        return AstPrinter().print(expression!!)
+        val statement = statements[0] as Stmt.Expression
+        return AstPrinter().print(statement.expression)
     }
 
     private fun captureError(action: () -> Unit): String {

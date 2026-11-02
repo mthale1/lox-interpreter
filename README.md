@@ -6,44 +6,36 @@ A Lox interpreter implemented in Kotlin based on the interpreter developed in *C
 
 ## Current Implementation
 
-The interpreter currently includes the functionality implemented through Chapter 7.
+The interpreter currently includes the functionality implemented through Chapter 9.
 
 At this stage, the interpreter can:
-
 - Read Lox source code from a file or interactive prompt
-- Scan source code into tokens
-- Parse tokens into expression syntax trees
-- Evaluate Lox expressions
-- Perform arithmetic, comparison, equality, and string operations
-- Apply Lox truthiness rules
+- Scan source code into tokens and parse it into syntax trees
+- Evaluate expressions and execute statements
+- Support variables, assignment, and block scope
+- Support arithmetic, comparison, equality, and logical operators
+- Execute conditional statements and loops
 - Report scanning, syntax, and runtime errors
 
 ### Limitations
-The interpreter can scan, parse, and evaluate expressions, but statements and
-other features introduced in later chapters are not implemented yet.
+The interpreter currently implements functionality through Chapter 9 of *Crafting Interpreters*. 
+Features introduced in later chapters have not yet been implemented.
 
-## Chapter 7 - Evaluating Expressions Implementation
-Chapter 7 adds `Interpreter.kt` for evaluating expression syntax trees produced by the parser
-and `RuntimeError.kt` for handling errors that occur during evaluation.
+## Chapter 8 & 9 - Statements, State, and Control Flow  
+Chapter 8 and 9 introduce statements, variable environments, and control flow, allowing Lox programs to store
+values, manage scope, make decisions, and repeat instructions.
 
 The interpreter supports:
+- Expression and print statements
+- Variable declarations, access, and assignments
+- Global and local environments with nested block scope
+- `if` and `else` statements
+- `while` and `for` loops
+- Logical operators using `and` and `or`
+- Runtime error handling for undefined variables
 
-- Literals - numbers, strings, booleans, and `nil`
-- Grouping with parentheses
-- Unary operators - `!` and `-`
-- Arithmetic operators - `*`, `/`, `+`, and `-`
-- Comparison operators - `<`, `<=`, `>`, and `>=`
-- Equality operators - `==` and `!=`
-- String concatenation using `+`
-- Lox truthiness rules
-- Runtime type checking
-- Runtime error reporting
-
-`RuntimeError.kt` represents errors that occur while evaluating expressions. Runtime
-errors are reported with the source line where the error occurred.
-
-Expression results are now printed to the console instead of printing the AST.
-
+`Environment.kt` manages variable storage, lookup, assignment, and nested environments.  
+`Stmt.kt` defines the different statement types used by the parser and interpreter.
 ---
 
 ## Requirements 
@@ -81,7 +73,9 @@ The automated tests are organized into the following files:
 - `LoxTest.kt` - Tests parsed expressions and Lox syntax and runtime error reporting.
 - `ExprTest.kt` - Tests the generated AST expression classes, including stored values, operators, 
 expressions, and Visitor routing.
+- `StmtTest.kt` - Tests AST statement classes, stored values, and Visitor routing.
 - `AstPrinterTest.kt` - Tests the parenthesized string representation of AST expressions.
+- `EnvironmentTest.kt` - Tests variable storage, lookup, assignment, and nested environments.
 - `GenerateAstTest.kt` - Tests AST generation, including expression classes, fields, Visitor methods, and `accept()` methods.
 - `ParserTest.kt` - Tests expression parsing, precedence, associativity, grouping, nesting, and parser errors.
 - `InterpreterTest.kt` - Tests expression evaluation, literals, grouping, unary and binary operators, truthiness, equality, nested expressions, and runtime errors.
@@ -92,7 +86,13 @@ expression evaluation, output formatting, command-line exit codes, syntax errors
 Testing output is included in `src/test/resources/output/`.
 
 - `automated-tests.txt` - Contains the results from the complete automated test suite.
-- `expression-output.txt` - Contains the output produced by running `expression.lox` through the interpreter.
+- `test_output.txt` - Contains the output produced by running `test_input.lox`.
+- `expected_test_output.txt` - Contains the expected output for comparison with the actual output.
+
+The files can be compared using:
+```bash
+diff src/test/resources/output/expected_test_output.txt src/test/resources/output/test_output.txt
+```
 
 ## Running the Interpreter
 ### Run from the Command Line
@@ -100,7 +100,7 @@ Start the Lox interpreter with:
 ```bash
 ./gradlew run --console=plain
 ```
-Enter one Lox expression at a time into the prompt. Press `Ctrl+D` to exit.
+Enter Lox statements into the interactive prompt. Press `Ctrl+D` to exit.
 
 ### Run a Lox Source File
 To run a Lox source file:
@@ -110,11 +110,8 @@ To run a Lox source file:
 
 A sample file can be run with:
 ```bash
-./gradlew run --args="src/test/resources/expression.lox"
+./gradlew run --args="src/test/resources/input/expression.lox"
 ```
-
-**Note:** At the Chapter 7 stage, a Lox source file should contain only one expression. 
-Multiple expressions in the same file are not supported yet.
 
 ## Project Structure
 
@@ -122,16 +119,18 @@ Multiple expressions in the same file are not supported yet.
 lox-interpreter/
 ├── README.md
 └── src/
-    ├── main/                               
+    ├── main/
     │   └── kotlin/
     │       ├── lox/                        # Main Lox interpreter source code
-    │       │   ├── Interpreter.kt          # Evaluates expression trees
-    │       │   ├── RuntimeError.kt         # Represents runtime evaluation errors
     │       │   ├── AstPrinter.kt           # Prints expression trees
+    │       │   ├── Environment.kt          # Manages variable storage and scope
     │       │   ├── Expr.kt                 # AST expression classes
+    │       │   ├── Interpreter.kt          # Evaluates expressions and executes statements
     │       │   ├── Lox.kt                  # Main entry point for the interpreter
-    │       │   ├── Parser.kt               # Parses tokens into expression trees
+    │       │   ├── Parser.kt               # Parses tokens into expression and statement trees
+    │       │   ├── RuntimeError.kt         # Represents runtime evaluation errors
     │       │   ├── Scanner.kt              # Scans Lox source code into tokens
+    │       │   ├── Stmt.kt                 # AST statement classes
     │       │   ├── Token.kt                # Represents individual tokens
     │       │   └── TokenType.kt            # Defines the different token types
     │       └── tool/
@@ -139,20 +138,31 @@ lox-interpreter/
     └── test/
         ├── kotlin/
         │   ├── lox/                        # Tests for the interpreter
-        │   │   ├── InterpreterTest.kt      
         │   │   ├── AstPrinterTest.kt
+        │   │   ├── EnvironmentTest.kt
         │   │   ├── ExprTest.kt
+        │   │   ├── InterpreterTest.kt
         │   │   ├── LoxIntegrationTest.kt
         │   │   ├── LoxTest.kt
         │   │   ├── ParserTest.kt
-        │   │   └── ScannerTest.kt
+        │   │   ├── ScannerTest.kt
+        │   │   └── StmtTest.kt
         │   └── tool/
-        │       └── GenerateAstTest.kt      # Tests the AST generator
+        │       └── GenerateAstTest.kt
         └── resources/                      # Test resources and output
-            ├── expression.lox              # Valid expression used to test file execution
-            ├── invalid.lox                 # Invalid syntax used to test syntax error handling
-            ├── runtime_error.lox           # Valid syntax that produces a runtime error
-            └── output/
-                ├── automated-tests.txt     # Automated test suite results
-                └── expression-output.txt   # Sample interpreter output
+            ├── input/                      # Lox source files used for testing
+            │   ├── block_scope.lox
+            │   ├── for.lox
+            │   ├── if_else.lox
+            │   ├── invalid.lox
+            │   ├── logical.lox
+            │   ├── runtime_error.lox
+            │   ├── test_input.lox
+            │   ├── undefined_variable.lox
+            │   ├── variables.lox
+            │   └── while.lox
+            └── output/                     # Saved test results and expected output
+                ├── automated-tests.txt
+                ├── expected_test_output.txt
+                └── test_output.txt
 ```

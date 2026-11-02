@@ -101,4 +101,58 @@ class AstPrinterTest {
         assertPrint("(+ (- 123) (group (+ 1 2)))", expression)
     }
 
+    @Test
+    fun printsVariableExpressions() {
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        assertPrint("a", Expr.Variable(name))
+    }
+
+    @Test
+    fun printsAssignmentExpressions() {
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        assertPrint("(= a 123)", Expr.Assign(name, Expr.Literal(123)))
+    }
+
+    @Test
+    fun printsChainedAssignments() {
+        val a = Token(TokenType.IDENTIFIER, "a", null, 1)
+        val b = Token(TokenType.IDENTIFIER, "b", null, 1)
+
+        val expression = Expr.Assign(
+            a,
+            Expr.Assign(
+                b,
+                Expr.Literal(123)
+            )
+        )
+
+        assertPrint("(= a (= b 123))", expression)
+    }
+
+    @Test
+    fun printsLogicalExpressions() {
+        val or = Token(TokenType.OR, "or", null, 1)
+        val and = Token(TokenType.AND, "and", null, 1)
+
+        assertPrint(
+            "(or true false)",
+            Expr.Logical(
+                Expr.Literal(true),
+                or,
+                Expr.Literal(false)
+            )
+        )
+
+        assertPrint(
+            "(and true false)",
+            Expr.Logical(
+                Expr.Literal(true),
+                and,
+                Expr.Literal(false)
+            )
+        )
+    }
+
 }

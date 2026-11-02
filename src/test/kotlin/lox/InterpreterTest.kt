@@ -65,8 +65,7 @@ class InterpreterTest {
     }
 
     @Test
-    fun evaluatesUnaryExpressions() {
-        // Negation
+    fun evaluatesUnaryMinus() {
         assertEvaluates(
             -5.0,
             Expr.Unary(
@@ -82,8 +81,10 @@ class InterpreterTest {
                 Expr.Literal(-5.0)
             )
         )
+    }
 
-        // Logical not
+    @Test
+    fun evaluatesLogicalNot() {
         assertEvaluates(
             false,
             Expr.Unary(
@@ -100,7 +101,7 @@ class InterpreterTest {
             )
         )
 
-        // nil is falsey
+        // nil is false
         assertEvaluates(
             true,
             Expr.Unary(
@@ -109,7 +110,7 @@ class InterpreterTest {
             )
         )
 
-        // Everything else is truthy
+        // Everything else is true
         assertEvaluates(
             false,
             Expr.Unary(
@@ -128,7 +129,7 @@ class InterpreterTest {
     }
 
     @Test
-    fun evaluatesArithmeticExpressions() {
+    fun evaluatesSubtraction() {
         assertEvaluates(
             7.0,
             Expr.Binary(
@@ -139,6 +140,18 @@ class InterpreterTest {
         )
 
         assertEvaluates(
+            -5.0,
+            Expr.Binary(
+                Expr.Literal(5.0),
+                Token(TokenType.MINUS, "-", null, 1),
+                Expr.Literal(10.0)
+            )
+        )
+    }
+
+    @Test
+    fun evaluatesDivision() {
+        assertEvaluates(
             5.0,
             Expr.Binary(
                 Expr.Literal(10.0),
@@ -146,7 +159,10 @@ class InterpreterTest {
                 Expr.Literal(2.0)
             )
         )
+    }
 
+    @Test
+    fun evaluatesMultiplication() {
         assertEvaluates(
             20.0,
             Expr.Binary(
@@ -155,7 +171,10 @@ class InterpreterTest {
                 Expr.Literal(5.0)
             )
         )
+    }
 
+    @Test
+    fun evaluatesAddition() {
         assertEvaluates(
             7.0,
             Expr.Binary(
@@ -165,23 +184,12 @@ class InterpreterTest {
             )
         )
 
-        // Decimal arithmetic
         assertEvaluates(
             4.0,
             Expr.Binary(
                 Expr.Literal(2.5),
                 Token(TokenType.PLUS, "+", null, 1),
                 Expr.Literal(1.5)
-            )
-        )
-
-        // Negative result
-        assertEvaluates(
-            -5.0,
-            Expr.Binary(
-                Expr.Literal(5.0),
-                Token(TokenType.MINUS, "-", null, 1),
-                Expr.Literal(10.0)
             )
         )
     }
@@ -217,8 +225,7 @@ class InterpreterTest {
     }
 
     @Test
-    fun evaluatesComparisonExpressions() {
-        // Greater than
+    fun evaluatesGreaterThan() {
         assertEvaluates(
             true,
             Expr.Binary(
@@ -236,8 +243,10 @@ class InterpreterTest {
                 Expr.Literal(5.0)
             )
         )
+    }
 
-        // Greater than or equal
+    @Test
+    fun evaluatesGreaterThanOrEqual() {
         assertEvaluates(
             true,
             Expr.Binary(
@@ -255,8 +264,10 @@ class InterpreterTest {
                 Expr.Literal(5.0)
             )
         )
+    }
 
-        // Less than
+    @Test
+    fun evaluatesLessThan() {
         assertEvaluates(
             true,
             Expr.Binary(
@@ -274,8 +285,10 @@ class InterpreterTest {
                 Expr.Literal(3.0)
             )
         )
+    }
 
-        // Less than or equal
+    @Test
+    fun evaluatesLessThanOrEqual() {
         assertEvaluates(
             true,
             Expr.Binary(
@@ -296,7 +309,7 @@ class InterpreterTest {
     }
 
     @Test
-    fun evaluatesEqualityExpressions() {
+    fun evaluatesEquality() {
         // Numbers
         assertEvaluates(
             true,
@@ -304,15 +317,6 @@ class InterpreterTest {
                 Expr.Literal(5.0),
                 Token(TokenType.EQUAL_EQUAL, "==", null, 1),
                 Expr.Literal(5.0)
-            )
-        )
-
-        assertEvaluates(
-            true,
-            Expr.Binary(
-                Expr.Literal(5.0),
-                Token(TokenType.BANG_EQUAL, "!=", null, 1),
-                Expr.Literal(3.0)
             )
         )
 
@@ -345,15 +349,6 @@ class InterpreterTest {
             )
         )
 
-        assertEvaluates(
-            true,
-            Expr.Binary(
-                Expr.Literal(true),
-                Token(TokenType.BANG_EQUAL, "!=", null, 1),
-                Expr.Literal(false)
-            )
-        )
-
         // nil
         assertEvaluates(
             true,
@@ -373,6 +368,7 @@ class InterpreterTest {
             )
         )
 
+        // Different types
         assertEvaluates(
             false,
             Expr.Binary(
@@ -381,7 +377,31 @@ class InterpreterTest {
                 Expr.Literal("5")
             )
         )
+    }
 
+    @Test
+    fun evaluatesInequality() {
+        // Numbers
+        assertEvaluates(
+            true,
+            Expr.Binary(
+                Expr.Literal(5.0),
+                Token(TokenType.BANG_EQUAL, "!=", null, 1),
+                Expr.Literal(3.0)
+            )
+        )
+
+        // Booleans
+        assertEvaluates(
+            true,
+            Expr.Binary(
+                Expr.Literal(true),
+                Token(TokenType.BANG_EQUAL, "!=", null, 1),
+                Expr.Literal(false)
+            )
+        )
+
+        // nil compared with another value
         assertEvaluates(
             true,
             Expr.Binary(
@@ -440,8 +460,337 @@ class InterpreterTest {
     }
 
     @Test
-    fun throwsRuntimeErrorsForInvalidOperands() {
-        // Unary minus requires a number
+    fun evaluatesVariables() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(123.0))
+        )
+
+        assertEquals(
+            123.0,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun evaluatesAssignmentExpressions() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(123.0))
+        )
+
+        val assignment = Expr.Assign(name, Expr.Literal(456.0))
+
+        assertEquals(456.0, assignment.accept(interpreter))
+    }
+
+    @Test
+    fun assignmentsUpdateVariables() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(123.0))
+        )
+
+        Expr.Assign(name, Expr.Literal(456.0)).accept(interpreter)
+
+        assertEquals(
+            456.0,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun evaluatesUninitializedVariables() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, null)
+        )
+
+        assertEquals(
+            null,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun accessesOuterVariablesInsideBlocks() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(123.0))
+        )
+
+        val outer = Environment()
+        outer.define("a", 123.0)
+
+        val inner = Environment(outer)
+
+        interpreter.executeBlock(
+            listOf(
+                Stmt.Expression(
+                    Expr.Assign(name, Expr.Literal(456.0))
+                )
+            ),
+            inner
+        )
+
+        assertEquals(456.0, outer.get(name))
+    }
+
+    @Test
+    fun restoresOuterEnvironmentAfterBlock() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(123.0))
+        )
+
+        interpreter.visitBlockStmt(
+            Stmt.Block(
+                listOf(
+                    Stmt.Var(name, Expr.Literal(456.0))
+                )
+            )
+        )
+
+        assertEquals(
+            123.0,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun evaluatesLogicalOr() {
+        assertEvaluates(
+            true,
+            Expr.Logical(
+                Expr.Literal(true),
+                Token(TokenType.OR, "or", null, 1),
+                Expr.Literal(false)
+            )
+        )
+
+        assertEvaluates(
+            "right",
+            Expr.Logical(
+                Expr.Literal(false),
+                Token(TokenType.OR, "or", null, 1),
+                Expr.Literal("right")
+            )
+        )
+    }
+
+    @Test
+    fun evaluatesLogicalAnd() {
+        assertEvaluates(
+            false,
+            Expr.Logical(
+                Expr.Literal(false),
+                Token(TokenType.AND, "and", null, 1),
+                Expr.Literal(true)
+            )
+        )
+
+        assertEvaluates(
+            "right",
+            Expr.Logical(
+                Expr.Literal(true),
+                Token(TokenType.AND, "and", null, 1),
+                Expr.Literal("right")
+            )
+        )
+    }
+
+    @Test
+    fun logicalOrSkipsRightWhenLeftIsTrue() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(0.0))
+        )
+
+        Expr.Logical(
+            Expr.Literal(true),
+            Token(TokenType.OR, "or", null, 1),
+            Expr.Assign(name, Expr.Literal(1.0))
+        ).accept(interpreter)
+
+        assertEquals(
+            0.0,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun logicalAndSkipsRightWhenLeftIsFalse() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(0.0))
+        )
+
+        Expr.Logical(
+            Expr.Literal(false),
+            Token(TokenType.AND, "and", null, 1),
+            Expr.Assign(name, Expr.Literal(1.0))
+        ).accept(interpreter)
+
+        assertEquals(
+            0.0,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun ifExecutesThenBranchWhenConditionIsTrue() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(0.0))
+        )
+
+        interpreter.visitIfStmt(
+            Stmt.If(
+                Expr.Literal(true),
+                Stmt.Expression(
+                    Expr.Assign(name, Expr.Literal(1.0))
+                ),
+                null
+            )
+        )
+
+        assertEquals(
+            1.0,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun ifExecutesElseBranchWhenConditionIsFalse() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(0.0))
+        )
+
+        interpreter.visitIfStmt(
+            Stmt.If(
+                Expr.Literal(false),
+                Stmt.Expression(
+                    Expr.Assign(name, Expr.Literal(1.0))
+                ),
+                Stmt.Expression(
+                    Expr.Assign(name, Expr.Literal(2.0))
+                )
+            )
+        )
+
+        assertEquals(
+            2.0,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun ifDoesNothingWhenConditionIsFalseWithoutElse() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(0.0))
+        )
+
+        interpreter.visitIfStmt(
+            Stmt.If(
+                Expr.Literal(false),
+                Stmt.Expression(
+                    Expr.Assign(name, Expr.Literal(1.0))
+                ),
+                null
+            )
+        )
+
+        assertEquals(
+            0.0,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun whileDoesNotExecuteWhenConditionIsFalse() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(0.0))
+        )
+
+        interpreter.visitWhileStmt(
+            Stmt.While(
+                Expr.Literal(false),
+                Stmt.Expression(
+                    Expr.Assign(name, Expr.Literal(1.0))
+                )
+            )
+        )
+
+        assertEquals(
+            0.0,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun whileRepeatsUntilConditionIsFalse() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "i", null, 1)
+
+        interpreter.visitVarStmt(
+            Stmt.Var(name, Expr.Literal(0.0))
+        )
+
+        interpreter.visitWhileStmt(
+            Stmt.While(
+                Expr.Binary(
+                    Expr.Variable(name),
+                    Token(TokenType.LESS, "<", null, 1),
+                    Expr.Literal(3.0)
+                ),
+                Stmt.Expression(
+                    Expr.Assign(
+                        name,
+                        Expr.Binary(
+                            Expr.Variable(name),
+                            Token(TokenType.PLUS, "+", null, 1),
+                            Expr.Literal(1.0)
+                        )
+                    )
+                )
+            )
+        )
+
+        assertEquals(
+            3.0,
+            Expr.Variable(name).accept(interpreter)
+        )
+    }
+
+    @Test
+    fun unaryMinusRejectsNonNumberOperand() {
         assertRuntimeError(
             "Operand must be a number.",
             Expr.Unary(
@@ -449,21 +798,23 @@ class InterpreterTest {
                 Expr.Literal("hello")
             )
         )
+    }
 
-        // Arithmetic operators require numbers
+    @Test
+    fun binaryOperatorsRejectNonNumberOperands() {
         assertRuntimeError(
             "Operands must be numbers.",
             Expr.Binary(
                 Expr.Literal("hello"),
                 Token(TokenType.MINUS, "-", null, 1),
-                Expr.Literal(2.0)
+                Expr.Literal(5.0)
             )
         )
 
         assertRuntimeError(
             "Operands must be numbers.",
             Expr.Binary(
-                Expr.Literal(2.0),
+                Expr.Literal(5.0),
                 Token(TokenType.STAR, "*", null, 1),
                 Expr.Literal("hello")
             )
@@ -474,47 +825,67 @@ class InterpreterTest {
             Expr.Binary(
                 Expr.Literal("hello"),
                 Token(TokenType.SLASH, "/", null, 1),
-                Expr.Literal(2.0)
+                Expr.Literal(5.0)
             )
         )
 
-        // Comparison operators require numbers
         assertRuntimeError(
             "Operands must be numbers.",
             Expr.Binary(
                 Expr.Literal("hello"),
                 Token(TokenType.GREATER, ">", null, 1),
-                Expr.Literal(2.0)
-            )
-        )
-
-        // + only allows two numbers or two strings
-        assertRuntimeError(
-            "Operands must be two numbers or two strings.",
-            Expr.Binary(
-                Expr.Literal("hello"),
-                Token(TokenType.PLUS, "+", null, 1),
-                Expr.Literal(2.0)
+                Expr.Literal(5.0)
             )
         )
 
         assertRuntimeError(
             "Operands must be numbers.",
             Expr.Binary(
-                Expr.Literal(2.0),
+                Expr.Literal(5.0),
                 Token(TokenType.MINUS, "-", null, 1),
                 Expr.Literal("hello")
+            )
+        )
+    }
+
+    @Test
+    fun additionRejectsMixedOperandTypes() {
+        assertRuntimeError(
+            "Operands must be two numbers or two strings.",
+            Expr.Binary(
+                Expr.Literal("hello"),
+                Token(TokenType.PLUS, "+", null, 1),
+                Expr.Literal(5.0)
             )
         )
 
         assertRuntimeError(
             "Operands must be two numbers or two strings.",
             Expr.Binary(
-                Expr.Literal(2.0),
+                Expr.Literal(5.0),
                 Token(TokenType.PLUS, "+", null, 1),
                 Expr.Literal("hello")
             )
         )
     }
 
+    @Test
+    fun throwsRuntimeErrorForUndefinedVariable() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        assertFailsWith<RuntimeError> {
+            Expr.Variable(name).accept(interpreter)
+        }
+    }
+
+    @Test
+    fun throwsRuntimeErrorWhenAssigningUndefinedVariable() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+
+        assertFailsWith<RuntimeError> {
+            Expr.Assign(name, Expr.Literal(123.0)).accept(interpreter)
+        }
+    }
 }

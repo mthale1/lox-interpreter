@@ -30,23 +30,28 @@ class ExprTest {
         override fun visitGroupingExpr(expr: Expr.Grouping) = "grouping"
         override fun visitUnaryExpr(expr: Expr.Unary) = "unary"
         override fun visitBinaryExpr(expr: Expr.Binary) = "binary"
+        override fun visitVariableExpr(expr: Expr.Variable) = "variable"
+        override fun visitAssignExpr(expr: Expr.Assign) = "assign"
+        override fun visitLogicalExpr(expr: Expr.Logical) = "logical"
     }
 
     @Test
     fun literalStoresValues() {
         val expressions = listOf(
-            Expr.Literal(123).value,       // integer
-            Expr.Literal(0.75).value,      // decimal
-            Expr.Literal("string").value,  // string
-            Expr.Literal(true).value,      // boolean
-            Expr.Literal(null).value       // nil
+            Expr.Literal(123).value,
+            Expr.Literal(0.75).value,
+            Expr.Literal("string").value,
+            Expr.Literal(true).value,
+            Expr.Literal(false).value,
+            Expr.Literal(null).value
         )
 
         assertEquals(123, expressions[0])
         assertEquals(0.75, expressions[1])
         assertEquals("string", expressions[2])
-        assertEquals(true,expressions[3])
-        assertEquals(null, expressions[4])
+        assertEquals(true, expressions[3])
+        assertEquals(false, expressions[4])
+        assertEquals(null, expressions[5])
     }
 
     @Test
@@ -135,6 +140,65 @@ class ExprTest {
     }
 
     @Test
+    fun variableStoresNames() {
+        val names = listOf(
+            Token(TokenType.IDENTIFIER, "a", null, 1),
+            Token(TokenType.IDENTIFIER, "variable", null, 1),
+            Token(TokenType.IDENTIFIER, "test123", null, 1)
+        )
+
+        for (name in names) {
+            val expression = Expr.Variable(name)
+
+            assertEquals(name, expression.name)
+        }
+    }
+
+    @Test
+    fun assignStoresNamesAndValues() {
+        val name = Token(TokenType.IDENTIFIER, "a", null, 1)
+        val variable = Expr.Variable(
+            Token(TokenType.IDENTIFIER, "b", null, 1)
+        )
+
+        val expressions = listOf(
+            Expr.Assign(name, literal),
+            Expr.Assign(name, grouping),
+            Expr.Assign(name, unary),
+            Expr.Assign(name, binary),
+            Expr.Assign(name, variable)
+        )
+
+        assertEquals(name, expressions[0].name)
+        assertEquals(literal, expressions[0].value)
+
+        assertEquals(name, expressions[1].name)
+        assertEquals(grouping, expressions[1].value)
+
+        assertEquals(name, expressions[2].name)
+        assertEquals(unary, expressions[2].value)
+
+        assertEquals(name, expressions[3].name)
+        assertEquals(binary, expressions[3].value)
+
+        assertEquals(name, expressions[4].name)
+        assertEquals(variable, expressions[4].value)
+    }
+
+    @Test
+    fun logicalStoresExpressionsAndOperator() {
+        val operator = Token(TokenType.OR, "or", null, 1)
+        val left = Expr.Literal(true)
+        val right = Expr.Literal(false)
+
+        val expression = Expr.Logical(left, operator, right)
+
+        assertEquals(left, expression.left)
+        assertEquals(operator, expression.operator)
+        assertEquals(right, expression.right)
+    }
+
+    @Test
     fun literalAcceptsVisitor() {
         val expression = Expr.Literal(1234)
 
@@ -167,6 +231,36 @@ class ExprTest {
         )
 
         assertEquals("binary", expression.accept(visitor))
+    }
+
+    @Test
+    fun variableAcceptsVisitor() {
+        val expression = Expr.Variable(
+            Token(TokenType.IDENTIFIER, "a", null, 1)
+        )
+
+        assertEquals("variable", expression.accept(visitor))
+    }
+
+    @Test
+    fun assignAcceptsVisitor() {
+        val expression = Expr.Assign(
+            Token(TokenType.IDENTIFIER, "a", null, 1),
+            Expr.Literal(123)
+        )
+
+        assertEquals("assign", expression.accept(visitor))
+    }
+
+    @Test
+    fun logicalAcceptsVisitor() {
+        val expression = Expr.Logical(
+            Expr.Literal(true),
+            Token(TokenType.OR, "or", null, 1),
+            Expr.Literal(false)
+        )
+
+        assertEquals("logical", expression.accept(visitor))
     }
 
 }

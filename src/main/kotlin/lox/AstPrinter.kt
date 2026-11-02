@@ -2,6 +2,18 @@ package lox
 
 class AstPrinter : Expr.Visitor<String> {
 
+    override fun visitVariableExpr(expr: Expr.Variable): String {
+        return expr.name.lexeme
+    }
+
+    override fun visitAssignExpr(expr: Expr.Assign): String {
+        return "(= ${expr.name.lexeme} ${expr.value.accept(this)})"
+    }
+
+    override fun visitLogicalExpr(expr: Expr.Logical): String {
+        return parenthesize(expr.operator.lexeme, expr.left, expr.right)
+    }
+
     fun print(expr: Expr): String {
         return expr.accept(this)
     }

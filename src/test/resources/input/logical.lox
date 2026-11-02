@@ -1,0 +1,4 @@
+print "left" or "right";
+print nil or "fallback";
+print false and "wrong";
+print true and "right";

@@ -1,0 +1,4 @@
+if (true) print "then";
+
+if (false) print "wrong";
+else print "else";
