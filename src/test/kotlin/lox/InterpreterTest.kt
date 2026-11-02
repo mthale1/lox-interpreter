@@ -790,6 +790,158 @@ class InterpreterTest {
     }
 
     @Test
+    fun callsNativeClockFunction() {
+        val interpreter = Interpreter()
+
+        val call = Expr.Call(
+            Expr.Variable(
+                Token(TokenType.IDENTIFIER, "clock", null, 1)
+            ),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            emptyList()
+        )
+
+        val result = call.accept(interpreter)
+
+        kotlin.test.assertIs<Double>(result)
+    }
+
+    @Test
+    fun functionDeclarationDefinesFunction() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "test", null, 1)
+
+        interpreter.visitFunctionStmt(
+            Stmt.Function(
+                name,
+                emptyList(),
+                emptyList()
+            )
+        )
+
+        val function = Expr.Variable(name).accept(interpreter)
+
+        kotlin.test.assertIs<LoxFunction>(function)
+    }
+
+    @Test
+    fun functionReceivesArguments() {
+        val interpreter = Interpreter()
+
+        val functionName = Token(
+            TokenType.IDENTIFIER,
+            "identity",
+            null,
+            1
+        )
+
+        val parameter = Token(
+            TokenType.IDENTIFIER,
+            "value",
+            null,
+            1
+        )
+
+        interpreter.visitFunctionStmt(
+            Stmt.Function(
+                functionName,
+                listOf(parameter),
+                listOf(
+                    Stmt.Return(
+                        Token(TokenType.RETURN, "return", null, 1),
+                        Expr.Variable(parameter)
+                    )
+                )
+            )
+        )
+
+        val call = Expr.Call(
+            Expr.Variable(functionName),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            listOf(Expr.Literal(123.0))
+        )
+
+        assertEquals(123.0, call.accept(interpreter))
+    }
+
+    @Test
+    fun functionWithoutReturnReturnsNil() {
+        val interpreter = Interpreter()
+
+        val name = Token(
+            TokenType.IDENTIFIER,
+            "test",
+            null,
+            1
+        )
+
+        interpreter.visitFunctionStmt(
+            Stmt.Function(
+                name,
+                emptyList(),
+                emptyList()
+            )
+        )
+
+        val call = Expr.Call(
+            Expr.Variable(name),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            emptyList()
+        )
+
+        assertEquals(null, call.accept(interpreter))
+    }
+
+    @Test
+    fun functionCapturesClosure() {
+        val interpreter = Interpreter()
+
+        val valueName = Token(
+            TokenType.IDENTIFIER,
+            "a",
+            null,
+            1
+        )
+
+        val functionName = Token(
+            TokenType.IDENTIFIER,
+            "getA",
+            null,
+            1
+        )
+
+        val localEnvironment = Environment(interpreter.globals)
+        localEnvironment.define("a", 123.0)
+
+        interpreter.executeBlock(
+            listOf(
+                Stmt.Function(
+                    functionName,
+                    emptyList(),
+                    listOf(
+                        Stmt.Return(
+                            Token(TokenType.RETURN, "return", null, 1),
+                            Expr.Variable(valueName)
+                        )
+                    )
+                )
+            ),
+            localEnvironment
+        )
+
+        val function = localEnvironment.get(functionName)
+        interpreter.globals.define("getA", function)
+
+        val call = Expr.Call(
+            Expr.Variable(functionName),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            emptyList()
+        )
+
+        assertEquals(123.0, call.accept(interpreter))
+    }
+
+    @Test
     fun unaryMinusRejectsNonNumberOperand() {
         assertRuntimeError(
             "Operand must be a number.",
@@ -866,6 +1018,55 @@ class InterpreterTest {
                 Token(TokenType.PLUS, "+", null, 1),
                 Expr.Literal("hello")
             )
+        )
+    }
+
+    @Test
+    fun rejectsCallingNonCallableValue() {
+        val call = Expr.Call(
+            Expr.Literal(123.0),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            emptyList()
+        )
+
+        assertRuntimeError(
+            "Can only call functions and classes.",
+            call
+        )
+    }
+
+    @Test
+    fun rejectsIncorrectArgumentCount() {
+        val interpreter = Interpreter()
+
+        val function = object : LoxCallable {
+            override fun arity() = 2
+
+            override fun call(
+                interpreter: Interpreter,
+                arguments: List<Any?>
+            ): Any? {
+                return null
+            }
+        }
+
+        interpreter.globals.define("test", function)
+
+        val call = Expr.Call(
+            Expr.Variable(
+                Token(TokenType.IDENTIFIER, "test", null, 1)
+            ),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            listOf(Expr.Literal(1.0))
+        )
+
+        val error = assertFailsWith<RuntimeError> {
+            call.accept(interpreter)
+        }
+
+        assertEquals(
+            "Expected 2 arguments but got 1.",
+            error.message
         )
     }
 

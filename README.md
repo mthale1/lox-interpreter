@@ -6,7 +6,7 @@ A Lox interpreter implemented in Kotlin based on the interpreter developed in *C
 
 ## Current Implementation
 
-The interpreter currently includes the functionality implemented through Chapter 9.
+The interpreter currently includes the functionality implemented through Chapter 10.
 
 At this stage, the interpreter can:
 - Read Lox source code from a file or interactive prompt
@@ -15,27 +15,16 @@ At this stage, the interpreter can:
 - Support variables, assignment, and block scope
 - Support arithmetic, comparison, equality, and logical operators
 - Execute conditional statements and loops
+- Declare and call functions
+- Pass arguments to functions and return values
+- Support local function scope and closures
+- Support recursive functions
+- Provide the native clock() function
 - Report scanning, syntax, and runtime errors
 
 ### Limitations
-The interpreter currently implements functionality through Chapter 9 of *Crafting Interpreters*. 
+The interpreter currently implements functionality through Chapter 10 of *Crafting Interpreters*. 
 Features introduced in later chapters have not yet been implemented.
-
-## Chapter 8 & 9 - Statements, State, and Control Flow  
-Chapter 8 and 9 introduce statements, variable environments, and control flow, allowing Lox programs to store
-values, manage scope, make decisions, and repeat instructions.
-
-The interpreter supports:
-- Expression and print statements
-- Variable declarations, access, and assignments
-- Global and local environments with nested block scope
-- `if` and `else` statements
-- `while` and `for` loops
-- Logical operators using `and` and `or`
-- Runtime error handling for undefined variables
-
-`Environment.kt` manages variable storage, lookup, assignment, and nested environments.  
-`Stmt.kt` defines the different statement types used by the parser and interpreter.
 ---
 
 ## Requirements 
@@ -58,6 +47,8 @@ This compiles the project and runs the automated test suite.
 
 ## Testing
 ### Automated Testing
+The saved automated test results are located in `src/test/resources/output/automated-tests.txt`.
+
 To run all automated unit tests:
 ```bash
 ./gradlew test
@@ -68,6 +59,11 @@ To clean the previous build and rerun all tests:
 ./gradlew clean test
 ```
 
+To rerun all automated tests and save the results:
+```bash
+./gradlew test --rerun-tasks > src/test/resources/output/automated-tests.txt 2>&1
+```
+
 The automated tests are organized into the following files:
 - `ScannerTest.kt` - Tests scanning, tokenization, literals, keywords, comments, line tracking, and scanner errors.
 - `LoxTest.kt` - Tests parsed expressions and Lox syntax and runtime error reporting.
@@ -76,23 +72,38 @@ expressions, and Visitor routing.
 - `StmtTest.kt` - Tests AST statement classes, stored values, and Visitor routing.
 - `AstPrinterTest.kt` - Tests the parenthesized string representation of AST expressions.
 - `EnvironmentTest.kt` - Tests variable storage, lookup, assignment, and nested environments.
+- `FunctionTest.kt` - Tests callable behavior, user-defined functions, return values, function arity, and closures.
 - `GenerateAstTest.kt` - Tests AST generation, including expression classes, fields, Visitor methods, and `accept()` methods.
 - `ParserTest.kt` - Tests expression parsing, precedence, associativity, grouping, nesting, and parser errors.
 - `InterpreterTest.kt` - Tests expression evaluation, literals, grouping, unary and binary operators, truthiness, equality, nested expressions, and runtime errors.
 - `LoxIntegrationTest.kt` - Tests the full Scanner -> Parser -> Interpreter pipeline, including file execution, 
 expression evaluation, output formatting, command-line exit codes, syntax errors, runtime errors, and interactive prompt behavior.
 
-### Testing Output
-Testing output is included in `src/test/resources/output/`.
+### Sample Input and Output
+`src/test/resources/input/test_input.lox` is a sample Lox program included with the project. 
+It contains Lox statements that exercise the implemented interpreter features.
 
-- `automated-tests.txt` - Contains the results from the complete automated test suite.
-- `test_output.txt` - Contains the output produced by running `test_input.lox`.
-- `expected_test_output.txt` - Contains the expected output for comparison with the actual output.
+To run this file through the interpreter and save the interpreter's output to `test_output.txt`, 
+first build the executable:
+```bash
+./gradlew installDist
+```
 
-The files can be compared using:
+Then run:
+```bash
+build/install/lox-interpreter/bin/lox-interpreter src/test/resources/input/test_input.lox > src/test/resources/output/test_output.txt
+```
+
+The sample test uses the following files:
+- `test_input.lox` - Sample Lox source code that is run through the interpreter.
+- `test_output.txt` - Actual output produced by the interpreter.
+- `expected_test_output.txt` - Expected output for the sample Lox program.
+
+Compare the generated output with the expected output:
 ```bash
 diff src/test/resources/output/expected_test_output.txt src/test/resources/output/test_output.txt
 ```
+If `diff` produces no output, the actual and expected outputs match.
 
 ## Running the Interpreter
 ### Run from the Command Line
@@ -103,14 +114,9 @@ Start the Lox interpreter with:
 Enter Lox statements into the interactive prompt. Press `Ctrl+D` to exit.
 
 ### Run a Lox Source File
-To run a Lox source file:
+To run any `.lox` source file:
 ```bash
 ./gradlew run --args="path/to/file.lox"
-```
-
-A sample file can be run with:
-```bash
-./gradlew run --args="src/test/resources/input/expression.lox"
 ```
 
 ## Project Structure
@@ -127,20 +133,24 @@ lox-interpreter/
     │       │   ├── Expr.kt                 # AST expression classes
     │       │   ├── Interpreter.kt          # Evaluates expressions and executes statements
     │       │   ├── Lox.kt                  # Main entry point for the interpreter
+    │       │   ├── LoxCallable.kt          # Defines callable Lox values
+    │       │   ├── LoxFunction.kt          # Represents user-defined Lox functions
     │       │   ├── Parser.kt               # Parses tokens into expression and statement trees
+    │       │   ├── Return.kt               # Handles values returned from functions
     │       │   ├── RuntimeError.kt         # Represents runtime evaluation errors
     │       │   ├── Scanner.kt              # Scans Lox source code into tokens
     │       │   ├── Stmt.kt                 # AST statement classes
     │       │   ├── Token.kt                # Represents individual tokens
     │       │   └── TokenType.kt            # Defines the different token types
     │       └── tool/
-    │           └── GenerateAst.kt          # Generates the AST expression classes
+    │           └── GenerateAst.kt          # Generates the AST expression and statement classes
     └── test/
         ├── kotlin/
         │   ├── lox/                        # Tests for the interpreter
         │   │   ├── AstPrinterTest.kt
         │   │   ├── EnvironmentTest.kt
         │   │   ├── ExprTest.kt
+        │   │   ├── FunctionTest.kt
         │   │   ├── InterpreterTest.kt
         │   │   ├── LoxIntegrationTest.kt
         │   │   ├── LoxTest.kt

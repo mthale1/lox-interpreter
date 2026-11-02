@@ -22,6 +22,8 @@ AstPrinterTest > printsVariableExpressions() PASSED
 
 AstPrinterTest > printsChainedAssignments() PASSED
 
+AstPrinterTest > printsCallExpressions() PASSED
+
 AstPrinterTest > printsLiterals() PASSED
 
 AstPrinterTest > printsAssignmentExpressions() PASSED
@@ -54,6 +56,8 @@ EnvironmentTest > assignsInnerVariableInsteadOfOuterVariable() PASSED
 
 ExprTest > assignStoresNamesAndValues() PASSED
 
+ExprTest > callStoresCalleeParenAndArguments() PASSED
+
 ExprTest > unaryStoresOperatorsAndExpressions() PASSED
 
 ExprTest > variableAcceptsVisitor() PASSED
@@ -70,6 +74,8 @@ ExprTest > variableStoresNames() PASSED
 
 ExprTest > logicalStoresExpressionsAndOperator() PASSED
 
+ExprTest > callAcceptsVisitor() PASSED
+
 ExprTest > logicalAcceptsVisitor() PASSED
 
 ExprTest > binaryStoresExpressionsAndOperator() PASSED
@@ -81,6 +87,24 @@ ExprTest > assignAcceptsVisitor() PASSED
 ExprTest > unaryAcceptsVisitor() PASSED
 
 ExprTest > binaryAcceptsVisitor() PASSED
+
+FunctionTest > storesReturnValue() PASSED
+
+FunctionTest > functionUsesClosure() PASSED
+
+FunctionTest > storesNilReturnValue() PASSED
+
+FunctionTest > stringRepresentationUsesFunctionName() PASSED
+
+FunctionTest > callReturnsNilWithoutReturnStatement() PASSED
+
+FunctionTest > callReturnsFunctionReturnValue() PASSED
+
+FunctionTest > arityMatchesParameterCount() PASSED
+
+FunctionTest > canBeThrownAndCaught() PASSED
+
+FunctionTest > callableProvidesArityAndCall() PASSED
 
 InterpreterTest > ifExecutesElseBranchWhenConditionIsFalse() PASSED
 
@@ -94,6 +118,8 @@ InterpreterTest > evaluatesInequality() PASSED
 
 InterpreterTest > accessesOuterVariablesInsideBlocks() PASSED
 
+InterpreterTest > functionReceivesArguments() PASSED
+
 InterpreterTest > evaluatesGrouping() PASSED
 
 InterpreterTest > evaluatesEquality() PASSED
@@ -104,13 +130,19 @@ InterpreterTest > evaluatesUnaryMinus() PASSED
 
 InterpreterTest > logicalAndSkipsRightWhenLeftIsFalse() PASSED
 
+InterpreterTest > functionDeclarationDefinesFunction() PASSED
+
 InterpreterTest > evaluatesSubtraction() PASSED
 
 InterpreterTest > evaluatesLogicalOr() PASSED
 
+InterpreterTest > rejectsIncorrectArgumentCount() PASSED
+
 InterpreterTest > additionRejectsMixedOperandTypes() PASSED
 
 InterpreterTest > evaluatesLiterals() PASSED
+
+InterpreterTest > functionWithoutReturnReturnsNil() PASSED
 
 InterpreterTest > restoresOuterEnvironmentAfterBlock() PASSED
 
@@ -140,6 +172,8 @@ InterpreterTest > evaluatesVariables() PASSED
 
 InterpreterTest > evaluatesAddition() PASSED
 
+InterpreterTest > functionCapturesClosure() PASSED
+
 InterpreterTest > ifExecutesThenBranchWhenConditionIsTrue() PASSED
 
 InterpreterTest > binaryOperatorsRejectNonNumberOperands() PASSED
@@ -148,15 +182,21 @@ InterpreterTest > evaluatesLessThanOrEqual() PASSED
 
 InterpreterTest > evaluatesGreaterThan() PASSED
 
+InterpreterTest > rejectsCallingNonCallableValue() PASSED
+
 InterpreterTest > assignmentsUpdateVariables() PASSED
 
 InterpreterTest > ifDoesNothingWhenConditionIsFalseWithoutElse() PASSED
+
+InterpreterTest > callsNativeClockFunction() PASSED
 
 InterpreterTest > throwsRuntimeErrorForUndefinedVariable() PASSED
 
 LoxIntegrationTest > runsBlockScope() PASSED
 
 LoxIntegrationTest > stringifiesValuesCorrectly() PASSED
+
+LoxIntegrationTest > runsUserDefinedFunction() PASSED
 
 LoxIntegrationTest > runsWhileLoops() PASSED
 
@@ -166,6 +206,10 @@ LoxIntegrationTest > interactivePromptContinuesAfterError() PASSED
 
 LoxIntegrationTest > runsLoxFile() PASSED
 
+LoxIntegrationTest > returnExitsFunctionEarly() PASSED
+
+LoxIntegrationTest > runsClosure() PASSED
+
 LoxIntegrationTest > runsLogicalExpressions() PASSED
 
 LoxIntegrationTest > exitsWithErrorForInvalidLoxFile() PASSED
@@ -174,9 +218,13 @@ LoxIntegrationTest > runsIfElseStatements() PASSED
 
 LoxIntegrationTest > exitsWithUsageErrorForTooManyArguments() PASSED
 
+LoxIntegrationTest > runsRecursiveFunction() PASSED
+
 LoxIntegrationTest > runsForLoops() PASSED
 
 LoxIntegrationTest > exitsWithErrorForUndefinedVariable() PASSED
+
+LoxIntegrationTest > functionWithoutReturnProducesNil() PASSED
 
 LoxIntegrationTest > runsInteractivePrompt() PASSED
 
@@ -187,6 +235,8 @@ LoxIntegrationTest > loxFileProducesExpectedOutput() PASSED
 LoxTest > reportsEndOfFileError() PASSED
 
 LoxTest > reportsLineError() PASSED
+
+LoxTest > runsCallExpressions() PASSED
 
 LoxTest > runsBinaryExpressions() PASSED
 
@@ -230,6 +280,8 @@ ParserTest > parsesForStatementWithoutIncrement() PASSED
 
 ParserTest > parsesForStatementWithoutInitializer() PASSED
 
+ParserTest > parsesFunctionCallWithArguments() PASSED
+
 ParserTest > rejectsMissingClosingBrace() PASSED
 
 ParserTest > parsesIfElseStatement() PASSED
@@ -241,6 +293,12 @@ ParserTest > parsesBlockWithMultipleStatements() PASSED
 ParserTest > parsesLogicalOrExpression() PASSED
 
 ParserTest > parsesNestedBlocks() PASSED
+
+ParserTest > parsesReturnWithValue() PASSED
+
+ParserTest > parsesFunctionDeclaration() PASSED
+
+ParserTest > parsesNestedFunctionCalls() PASSED
 
 ParserTest > parsesLiterals() PASSED
 
@@ -261,6 +319,8 @@ ParserTest > parsesWhileWithExpressionCondition() PASSED
 ParserTest > parsesVariableDeclaration() PASSED
 
 ParserTest > parsesLogicalAndExpression() PASSED
+
+ParserTest > parsesFunctionCallWithoutArguments() PASSED
 
 ParserTest > rejectsMissingClosingParenthesisAfterForClause() PASSED
 
@@ -300,6 +360,8 @@ ParserTest > parsesChainedAssignment() PASSED
 
 ParserTest > parsesGroupingPrecedence() PASSED
 
+ParserTest > parsesFunctionWithoutParameters() PASSED
+
 ParserTest > forStatementWithoutConditionUsesTrue() PASSED
 
 ParserTest > parsesWhileStatement() PASSED
@@ -309,6 +371,8 @@ ParserTest > parsesWhileWithBlockBody() PASSED
 ParserTest > parsesGroupingExpressions() PASSED
 
 ParserTest > parsesFactorExpressions() PASSED
+
+ParserTest > parsesReturnWithoutValue() PASSED
 
 ParserTest > parsesOperatorPrecedence() PASSED
 
@@ -344,11 +408,15 @@ ScannerTest > scansIdentifiers() PASSED
 
 ScannerTest > identifierCannotStartWithNumber() PASSED
 
+StmtTest > functionAcceptsVisitor() PASSED
+
 StmtTest > whileAcceptsVisitor() PASSED
 
 StmtTest > varStoresNamesAndInitializers() PASSED
 
 StmtTest > printAcceptsVisitor() PASSED
+
+StmtTest > functionStoresNameParametersAndBody() PASSED
 
 StmtTest > expressionAcceptsVisitor() PASSED
 
@@ -356,7 +424,11 @@ StmtTest > blockStoresStatements() PASSED
 
 StmtTest > printStoresExpressions() PASSED
 
+StmtTest > returnAcceptsVisitor() PASSED
+
 StmtTest > ifAcceptsVisitor() PASSED
+
+StmtTest > returnStoresKeywordAndValue() PASSED
 
 StmtTest > blockAcceptsVisitor() PASSED
 
@@ -370,13 +442,19 @@ StmtTest > varStoresNullInitializer() PASSED
 
 StmtTest > ifStoresNullElseBranch() PASSED
 
+StmtTest > returnStoresNullValue() PASSED
+
 StmtTest > expressionStoresExpressions() PASSED
 
 StmtTest > whileStoresConditionAndBody() PASSED
 
 GenerateAstTest > generatesExpressionFields() PASSED
 
+GenerateAstTest > generatesStatementClasses() PASSED
+
 GenerateAstTest > generatesVisitorMethods() PASSED
+
+GenerateAstTest > generatesStatementVisitorMethods() PASSED
 
 GenerateAstTest > generatesAcceptMethods() PASSED
 
@@ -384,6 +462,10 @@ GenerateAstTest > generatesExpressionClasses() PASSED
 
 GenerateAstTest > generatesExprFile() PASSED
 
-BUILD SUCCESSFUL in 5s
+GenerateAstTest > generatesStatementFields() PASSED
+
+GenerateAstTest > generatesStatementAcceptMethods() PASSED
+
+BUILD SUCCESSFUL in 7s
 5 actionable tasks: 5 executed
 Configuration cache entry reused.

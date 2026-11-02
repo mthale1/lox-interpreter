@@ -237,4 +237,22 @@ class LoxTest {
         }
     }
 
+    @Test
+    fun runsCallExpressions() {
+        assertEquals(
+            "(call clock)",
+            runExpression("clock()")
+        )
+
+        assertEquals(
+            "(call add 1.0 2.0)",
+            runExpression("add(1, 2)")
+        )
+
+        assertEquals(
+            "(call outer (call inner 1.0))",
+            runExpression("outer(inner(1))")
+        )
+    }
+
 }

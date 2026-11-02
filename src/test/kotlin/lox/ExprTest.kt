@@ -30,6 +30,7 @@ class ExprTest {
         override fun visitGroupingExpr(expr: Expr.Grouping) = "grouping"
         override fun visitUnaryExpr(expr: Expr.Unary) = "unary"
         override fun visitBinaryExpr(expr: Expr.Binary) = "binary"
+        override fun visitCallExpr(expr: Expr.Call) = "call"
         override fun visitVariableExpr(expr: Expr.Variable) = "variable"
         override fun visitAssignExpr(expr: Expr.Assign) = "assign"
         override fun visitLogicalExpr(expr: Expr.Logical) = "logical"
@@ -261,6 +262,40 @@ class ExprTest {
         )
 
         assertEquals("logical", expression.accept(visitor))
+    }
+
+    @Test
+    fun callStoresCalleeParenAndArguments() {
+        val callee = Expr.Variable(
+            Token(TokenType.IDENTIFIER, "add", null, 1)
+        )
+        val paren = Token(TokenType.RIGHT_PAREN, ")", null, 1)
+        val arguments = listOf(
+            Expr.Literal(1.0),
+            Expr.Literal(2.0)
+        )
+
+        val expression = Expr.Call(callee, paren, arguments)
+
+        assertEquals(callee, expression.callee)
+        assertEquals(paren, expression.paren)
+        assertEquals(arguments, expression.arguments)
+    }
+
+    @Test
+    fun callAcceptsVisitor() {
+        val expression = Expr.Call(
+            Expr.Variable(
+                Token(TokenType.IDENTIFIER, "add", null, 1)
+            ),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            listOf(
+                Expr.Literal(1.0),
+                Expr.Literal(2.0)
+            )
+        )
+
+        assertEquals("call", expression.accept(visitor))
     }
 
 }

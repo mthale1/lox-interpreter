@@ -155,4 +155,22 @@ class AstPrinterTest {
         )
     }
 
+    @Test
+    fun printsCallExpressions() {
+        val callee = Expr.Variable(
+            Token(TokenType.IDENTIFIER, "add", null, 1)
+        )
+
+        val expression = Expr.Call(
+            callee,
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            listOf(
+                Expr.Literal(1),
+                Expr.Literal(2)
+            )
+        )
+
+        assertPrint("(call add 1 2)", expression)
+    }
+
 }

@@ -9,3 +9,11 @@ greater
 0
 1
 2
+5
+hello from function
+no return
+nil
+returned early
+1
+2
+8

@@ -9,7 +9,9 @@ class StmtTest {
         override fun visitBlockStmt(stmt: Stmt.Block) = "block"
         override fun visitExpressionStmt(stmt: Stmt.Expression) = "expression"
         override fun visitIfStmt(stmt: Stmt.If) = "if"
+        override fun visitFunctionStmt(stmt: Stmt.Function) = "function"
         override fun visitPrintStmt(stmt: Stmt.Print) = "print"
+        override fun visitReturnStmt(stmt: Stmt.Return) = "return"
         override fun visitVarStmt(stmt: Stmt.Var) = "var"
         override fun visitWhileStmt(stmt: Stmt.While) = "while"
     }
@@ -157,6 +159,45 @@ class StmtTest {
     }
 
     @Test
+    fun functionStoresNameParametersAndBody() {
+        val name = Token(TokenType.IDENTIFIER, "add", null, 1)
+        val parameters = listOf(
+            Token(TokenType.IDENTIFIER, "a", null, 1),
+            Token(TokenType.IDENTIFIER, "b", null, 1)
+        )
+        val body = listOf<Stmt>(
+            Stmt.Print(Expr.Variable(parameters[0]))
+        )
+
+        val statement = Stmt.Function(name, parameters, body)
+
+        assertEquals(name, statement.name)
+        assertEquals(parameters, statement.params)
+        assertEquals(body, statement.body)
+    }
+
+    @Test
+    fun returnStoresKeywordAndValue() {
+        val keyword = Token(TokenType.RETURN, "return", null, 1)
+        val value = Expr.Literal(123)
+
+        val statement = Stmt.Return(keyword, value)
+
+        assertEquals(keyword, statement.keyword)
+        assertEquals(value, statement.value)
+    }
+
+    @Test
+    fun returnStoresNullValue() {
+        val keyword = Token(TokenType.RETURN, "return", null, 1)
+
+        val statement = Stmt.Return(keyword, null)
+
+        assertEquals(keyword, statement.keyword)
+        assertEquals(null, statement.value)
+    }
+
+    @Test
     fun expressionAcceptsVisitor() {
         val statement = Stmt.Expression(
             Expr.Literal(123)
@@ -212,6 +253,27 @@ class StmtTest {
         )
 
         assertEquals("while", statement.accept(visitor))
+    }
+
+    @Test
+    fun functionAcceptsVisitor() {
+        val statement = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "test", null, 1),
+            emptyList(),
+            emptyList()
+        )
+
+        assertEquals("function", statement.accept(visitor))
+    }
+
+    @Test
+    fun returnAcceptsVisitor() {
+        val statement = Stmt.Return(
+            Token(TokenType.RETURN, "return", null, 1),
+            Expr.Literal(123)
+        )
+
+        assertEquals("return", statement.accept(visitor))
     }
 
 }

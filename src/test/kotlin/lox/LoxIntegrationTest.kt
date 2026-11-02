@@ -280,4 +280,124 @@ class LoxIntegrationTest {
         assertEquals(0, exitCode)
         assertEquals("0\n1\n2", output.trim())
     }
+
+    @Test
+    fun runsUserDefinedFunction() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox"
+        ).start()
+
+        process.outputStream.bufferedWriter().use { writer ->
+            writer.write("fun add(a, b) { return a + b; }\n")
+            writer.write("print add(2, 3);\n")
+        }
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+        assertTrue(output.contains("5"))
+    }
+
+    @Test
+    fun returnExitsFunctionEarly() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox"
+        ).start()
+
+        process.outputStream.bufferedWriter().use { writer ->
+            writer.write("fun test() { return 123; print 456; }\n")
+            writer.write("print test();\n")
+        }
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+        assertTrue(output.contains("123"))
+        assertTrue(!output.contains("456"))
+    }
+
+    @Test
+    fun functionWithoutReturnProducesNil() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox"
+        ).start()
+
+        process.outputStream.bufferedWriter().use { writer ->
+            writer.write("fun test() { }\n")
+            writer.write("print test();\n")
+        }
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+        assertTrue(output.contains("nil"))
+    }
+
+    @Test
+    fun runsClosure() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox"
+        ).start()
+
+        process.outputStream.bufferedWriter().use { writer ->
+            writer.write(
+                "fun makeCounter() { " +
+                        "var i = 0; " +
+                        "fun count() { i = i + 1; print i; } " +
+                        "return count; " +
+                        "}\n"
+            )
+            writer.write("var counter = makeCounter();\n")
+            writer.write("counter();\n")
+            writer.write("counter();\n")
+        }
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+        assertTrue(output.contains("1"))
+        assertTrue(output.contains("2"))
+    }
+
+    @Test
+    fun runsRecursiveFunction() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox"
+        ).start()
+
+        process.outputStream.bufferedWriter().use { writer ->
+            writer.write(
+                "fun fib(n) { " +
+                        "if (n <= 1) return n; " +
+                        "return fib(n - 2) + fib(n - 1); " +
+                        "}\n"
+            )
+            writer.write("print fib(6);\n")
+        }
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+        assertTrue(output.contains("8"))
+    }
 }

@@ -41,6 +41,11 @@ class ParserTest {
             val name: String,
             val value: ExpectedExpr
         ) : ExpectedExpr()
+
+        data class Call(
+            val callee: ExpectedExpr,
+            val arguments: List<ExpectedExpr>
+        ) : ExpectedExpr()
     }
 
     // Recursively compares the AST created by the parser to the expected AST.
@@ -86,6 +91,16 @@ class ParserTest {
                 assertIs<Expr.Assign>(actual)
                 assertEquals(expected.name, actual.name.lexeme)
                 assertExpression(actual.value, expected.value)
+            }
+
+            is ExpectedExpr.Call -> {
+                assertIs<Expr.Call>(actual)
+                assertExpression(actual.callee, expected.callee)
+                assertEquals(expected.arguments.size, actual.arguments.size)
+
+                for (i in expected.arguments.indices) {
+                    assertExpression(actual.arguments[i], expected.arguments[i])
+                }
             }
         }
     }
@@ -1041,6 +1056,113 @@ class ParserTest {
         assertExpression(parse("!(1 + 2 > 3)"), unary)
         assertExpression(parse("1 + 2 * 3 == 7"), mixedPrecedence)
         assertExpression(parse("-5 < 2 * 3"), unaryAndComparison)
+    }
+
+    @Test
+    fun parsesFunctionCallWithoutArguments() {
+        val expected = ExpectedExpr.Call(
+            ExpectedExpr.Variable("clock"),
+            emptyList()
+        )
+
+        assertExpression(parse("clock()"), expected)
+    }
+
+    @Test
+    fun parsesFunctionCallWithArguments() {
+        val expected = ExpectedExpr.Call(
+            ExpectedExpr.Variable("add"),
+            listOf(
+                ExpectedExpr.Literal(1.0),
+                ExpectedExpr.Literal(2.0)
+            )
+        )
+
+        assertExpression(parse("add(1, 2)"), expected)
+    }
+
+    @Test
+    fun parsesNestedFunctionCalls() {
+        val expected = ExpectedExpr.Call(
+            ExpectedExpr.Variable("outer"),
+            listOf(
+                ExpectedExpr.Call(
+                    ExpectedExpr.Variable("inner"),
+                    listOf(ExpectedExpr.Literal(1.0))
+                )
+            )
+        )
+
+        assertExpression(parse("outer(inner(1))"), expected)
+    }
+
+    @Test
+    fun parsesFunctionDeclaration() {
+        val statements = parseStatements(
+            "fun add(a, b) { print a + b; }"
+        )
+
+        assertEquals(1, statements.size)
+
+        val function = statements[0]
+        assertIs<Stmt.Function>(function)
+
+        assertEquals("add", function.name.lexeme)
+        assertEquals(2, function.params.size)
+        assertEquals("a", function.params[0].lexeme)
+        assertEquals("b", function.params[1].lexeme)
+        assertEquals(1, function.body.size)
+
+        assertIs<Stmt.Print>(function.body[0])
+    }
+
+    @Test
+    fun parsesFunctionWithoutParameters() {
+        val statements = parseStatements(
+            "fun test() { print 123; }"
+        )
+
+        assertEquals(1, statements.size)
+
+        val function = statements[0]
+        assertIs<Stmt.Function>(function)
+
+        assertEquals("test", function.name.lexeme)
+        assertEquals(0, function.params.size)
+        assertEquals(1, function.body.size)
+    }
+
+    @Test
+    fun parsesReturnWithValue() {
+        val statements = parseStatements(
+            "return 123;"
+        )
+
+        assertEquals(1, statements.size)
+
+        val statement = statements[0]
+        assertIs<Stmt.Return>(statement)
+
+        assertEquals("return", statement.keyword.lexeme)
+        assertExpression(
+            statement.value,
+            ExpectedExpr.Literal(123.0)
+        )
+    }
+
+    @Test
+    fun parsesReturnWithoutValue() {
+        val statements = parseStatements(
+            "return;"
+        )
+
+        assertEquals(1, statements.size)
+
+        val statement = statements[0]
+        assertIs<Stmt.Return>(statement)
+
+        assertEquals("return", statement.keyword.lexeme)
+        assertNull(statement.value)
     }
 
     @Test

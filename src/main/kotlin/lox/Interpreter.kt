@@ -1,7 +1,27 @@
 package lox
 
 class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
-    private var environment = Environment()
+    val globals = Environment()
+    private var environment = globals
+
+    init {
+        globals.define("clock", object : LoxCallable {
+            override fun arity(): Int {
+                return 0
+            }
+
+            override fun call(
+                interpreter: Interpreter,
+                arguments: List<Any?>
+            ): Any? {
+                return System.currentTimeMillis() / 1000.0
+            }
+
+            override fun toString(): String {
+                return "<native fn>"
+            }
+        })
+    }
 
     override fun visitLiteralExpr(expr: Expr.Literal): Any? {
         return expr.value
@@ -133,6 +153,11 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
         evaluate(stmt.expression)
     }
 
+    override fun visitFunctionStmt(stmt: Stmt.Function) {
+        val function = LoxFunction(stmt, environment)
+        environment.define(stmt.name.lexeme, function)
+    }
+
     override fun visitIfStmt(stmt: Stmt.If) {
         if (isTruthy(evaluate(stmt.condition))) {
             execute(stmt.thenBranch)
@@ -144,6 +169,16 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
     override fun visitPrintStmt(stmt: Stmt.Print) {
         val value: Any? = evaluate(stmt.expression)
         println(stringify(value))
+    }
+
+    override fun visitReturnStmt(stmt: Stmt.Return) {
+        var value: Any? = null
+
+        if (stmt.value != null) {
+            value = evaluate(stmt.value)
+        }
+
+        throw Return(value)
     }
 
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {
@@ -210,6 +245,34 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
 
         // Unreachable.
         return null
+    }
+
+    override fun visitCallExpr(expr: Expr.Call): Any? {
+        val callee: Any? = evaluate(expr.callee)
+
+        val arguments = mutableListOf<Any?>()
+
+        for (argument in expr.arguments) {
+            arguments.add(evaluate(argument))
+        }
+
+        if (callee !is LoxCallable) {
+            throw RuntimeError(
+                expr.paren,
+                "Can only call functions and classes."
+            )
+        }
+
+        val function = callee
+
+        if (arguments.size != function.arity()) {
+            throw RuntimeError(
+                expr.paren,
+                "Expected ${function.arity()} arguments but got ${arguments.size}."
+            )
+        }
+
+        return function.call(this, arguments)
     }
 
     fun interpret(statements: List<Stmt>) {
