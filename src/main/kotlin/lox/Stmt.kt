@@ -22,6 +22,7 @@ abstract class Stmt {
     }
     class Class(
         val name: Token,
+        val superclass: Expr.Variable?,
         val methods: List<Stmt.Function>
     ) : Stmt() {
 

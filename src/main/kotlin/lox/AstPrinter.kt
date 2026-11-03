@@ -33,6 +33,10 @@ class AstPrinter : Expr.Visitor<String> {
         )
     }
 
+    override fun visitSuperExpr(expr: Expr.Super): String {
+        return "(super.${expr.method.lexeme})"
+    }
+
     override fun visitThisExpr(expr: Expr.This): String {
         return "this"
     }

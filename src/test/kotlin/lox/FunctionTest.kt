@@ -225,7 +225,7 @@ class FunctionTest {
             false
         )
 
-        val klass = LoxClass("Test", emptyMap())
+        val klass = LoxClass("Test", null,emptyMap())
         val instance = LoxInstance(klass)
 
         val bound = function.bind(instance)
@@ -250,7 +250,7 @@ class FunctionTest {
             true
         )
 
-        val klass = LoxClass("Test", emptyMap())
+        val klass = LoxClass("Test", null, emptyMap())
         val instance = LoxInstance(klass)
 
         val bound = function.bind(instance)
@@ -280,7 +280,7 @@ class FunctionTest {
             true
         )
 
-        val klass = LoxClass("Test", emptyMap())
+        val klass = LoxClass("Test", null,emptyMap())
         val instance = LoxInstance(klass)
 
         val bound = function.bind(instance)

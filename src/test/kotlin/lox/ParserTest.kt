@@ -58,6 +58,10 @@ class ParserTest {
             val value: ExpectedExpr
         ) : ExpectedExpr()
 
+        data class Super(
+            val method: String
+        ) : ExpectedExpr()
+
         data object This : ExpectedExpr()
     }
 
@@ -127,6 +131,12 @@ class ParserTest {
                 assertExpression(actual.obj, expected.obj)
                 assertEquals(expected.name, actual.name.lexeme)
                 assertExpression(actual.value, expected.value)
+            }
+
+            is ExpectedExpr.Super -> {
+                assertIs<Expr.Super>(actual)
+                assertEquals("super", actual.keyword.lexeme)
+                assertEquals(expected.method, actual.method.lexeme)
             }
 
             ExpectedExpr.This -> {
@@ -1320,6 +1330,47 @@ class ParserTest {
 
         assertExpression(
             parse("breakfast.serve()"),
+            expected
+        )
+    }
+
+    @Test
+    fun parsesClassWithSuperclass() {
+        val statements = parseStatements(
+            "class Brunch < Breakfast {}"
+        )
+
+        assertEquals(1, statements.size)
+
+        val klass = statements[0]
+        assertIs<Stmt.Class>(klass)
+
+        assertEquals("Brunch", klass.name.lexeme)
+
+        val superclass = klass.superclass
+        assertIs<Expr.Variable>(superclass)
+        assertEquals("Breakfast", superclass.name.lexeme)
+
+        assertEquals(0, klass.methods.size)
+    }
+
+    @Test
+    fun parsesSuperExpression() {
+        assertExpression(
+            parse("super.cook"),
+            ExpectedExpr.Super("cook")
+        )
+    }
+
+    @Test
+    fun parsesSuperMethodCall() {
+        val expected = ExpectedExpr.Call(
+            ExpectedExpr.Super("cook"),
+            emptyList()
+        )
+
+        assertExpression(
+            parse("super.cook()"),
             expected
         )
     }

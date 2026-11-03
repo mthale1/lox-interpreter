@@ -1,0 +1,35 @@
+class Parent {
+    greet() {
+        print "Hello from parent";
+    }
+
+    describe() {
+        print "Parent";
+    }
+}
+
+class Child < Parent {
+    describe() {
+        super.describe();
+        print "Child";
+    }
+}
+
+var child = Child();
+
+child.greet();
+child.describe();
+
+var inheritedMethod = child.greet;
+inheritedMethod();
+
+class Base {
+    init(value) {
+        this.value = value;
+    }
+}
+
+class Derived < Base {}
+
+var derived = Derived("inherited value");
+print derived.value;

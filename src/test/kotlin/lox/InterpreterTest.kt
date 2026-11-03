@@ -1,8 +1,11 @@
 package lox
 
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class InterpreterTest {
 
@@ -19,6 +22,50 @@ class InterpreterTest {
         }
 
         assertEquals(expectedMessage, error.message)
+    }
+
+    private fun interpret(source: String): String {
+        val output = ByteArrayOutputStream()
+        val originalOut = System.out
+
+        try {
+            System.setOut(PrintStream(output))
+
+            val tokens = Scanner(source).scanTokens()
+            val statements = Parser(tokens).parse()
+
+            val interpreter = Interpreter()
+            val resolver = Resolver(interpreter)
+
+            resolver.resolve(statements)
+            interpreter.interpret(statements)
+        } finally {
+            System.setOut(originalOut)
+        }
+
+        return output.toString().trim()
+    }
+
+    private fun interpretError(source: String): String {
+        val output = ByteArrayOutputStream()
+        val originalError = System.err
+
+        try {
+            System.setErr(PrintStream(output))
+
+            val tokens = Scanner(source).scanTokens()
+            val statements = Parser(tokens).parse()
+
+            val interpreter = Interpreter()
+            val resolver = Resolver(interpreter)
+
+            resolver.resolve(statements)
+            interpreter.interpret(statements)
+        } finally {
+            System.setErr(originalError)
+        }
+
+        return output.toString().trim()
     }
 
     @Test
@@ -1110,7 +1157,7 @@ class InterpreterTest {
         val name = Token(TokenType.IDENTIFIER, "Breakfast", null, 1)
 
         interpreter.visitClassStmt(
-            Stmt.Class(name, emptyList())
+            Stmt.Class(name, null, emptyList())
         )
 
         val klass = Expr.Variable(name).accept(interpreter)
@@ -1125,7 +1172,7 @@ class InterpreterTest {
         val name = Token(TokenType.IDENTIFIER, "Breakfast", null, 1)
 
         interpreter.visitClassStmt(
-            Stmt.Class(name, emptyList())
+            Stmt.Class(name, null, emptyList())
         )
 
         val call = Expr.Call(
@@ -1143,7 +1190,7 @@ class InterpreterTest {
     @Test
     fun setsAndGetsInstanceField() {
         val interpreter = Interpreter()
-        val klass = LoxClass("Breakfast", emptyMap())
+        val klass = LoxClass("Breakfast", null, emptyMap())
         val instance = LoxInstance(klass)
 
         val field = Token(
@@ -1224,6 +1271,7 @@ class InterpreterTest {
 
         val klass = Stmt.Class(
             className,
+            null,
             listOf(method)
         )
 
@@ -1288,6 +1336,7 @@ class InterpreterTest {
 
         val klass = Stmt.Class(
             className,
+            null,
             listOf(method)
         )
 
@@ -1359,6 +1408,7 @@ class InterpreterTest {
 
         val klass = Stmt.Class(
             className,
+            null,
             listOf(initializer)
         )
 
@@ -1380,6 +1430,134 @@ class InterpreterTest {
             instance.get(
                 Token(TokenType.IDENTIFIER, "meat", null, 1)
             )
+        )
+    }
+
+    @Test
+    fun subclassInheritsSuperclassMethod() {
+        val output = interpret(
+            """
+        class Breakfast {
+            serve() {
+                print "breakfast";
+            }
+        }
+
+        class Brunch < Breakfast {}
+
+        Brunch().serve();
+        """.trimIndent()
+        )
+
+        assertEquals("breakfast", output)
+    }
+
+    @Test
+    fun subclassOverridesSuperclassMethod() {
+        val output = interpret(
+            """
+        class Breakfast {
+            serve() {
+                print "breakfast";
+            }
+        }
+
+        class Brunch < Breakfast {
+            serve() {
+                print "brunch";
+            }
+        }
+
+        Brunch().serve();
+        """.trimIndent()
+        )
+
+        assertEquals("brunch", output)
+    }
+
+    @Test
+    fun superCallsSuperclassMethod() {
+        val output = interpret(
+            """
+        class Breakfast {
+            serve() {
+                print "breakfast";
+            }
+        }
+
+        class Brunch < Breakfast {
+            serve() {
+                super.serve();
+                print "brunch";
+            }
+        }
+
+        Brunch().serve();
+        """.trimIndent()
+        )
+
+        assertEquals(
+            """
+        breakfast
+        brunch
+        """.trimIndent(),
+            output
+        )
+    }
+
+    @Test
+    fun subclassInheritsInitializer() {
+        val output = interpret(
+            """
+        class Breakfast {
+            init(meat) {
+                this.meat = meat;
+            }
+        }
+
+        class Brunch < Breakfast {}
+
+        var brunch = Brunch("bacon");
+        print brunch.meat;
+        """.trimIndent()
+        )
+
+        assertEquals("bacon", output)
+    }
+
+    @Test
+    fun rejectsNonClassSuperclass() {
+        val error = interpretError(
+            """
+        var Breakfast = "not a class";
+
+        class Brunch < Breakfast {}
+        """.trimIndent()
+        )
+
+        assertTrue(
+            error.contains("Superclass must be a class.")
+        )
+    }
+
+    @Test
+    fun rejectsUndefinedSuperclassMethod() {
+        val error = interpretError(
+            """
+        class Breakfast {}
+
+        class Brunch < Breakfast {
+            serve() {
+                super.serve();
+            }
+        }
+
+        Brunch().serve();
+        """.trimIndent()
+        )
+
+        assertTrue(
+            error.contains("Undefined property 'serve'.")
         )
     }
 }

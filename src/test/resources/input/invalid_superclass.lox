@@ -1,0 +1,3 @@
+var Parent = "not a class";
+
+class Child < Parent {}

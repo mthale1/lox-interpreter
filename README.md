@@ -5,17 +5,16 @@ A Lox interpreter implemented in Kotlin based on the interpreter developed in *C
 **Programming Language:** Kotlin  
 
 ## Current Implementation
-
-The interpreter currently includes the functionality implemented through Chapter 12.
+The interpreter currently includes the functionality implemented through Chapter 13.
 
 The interpreter supports scanning and parsing Lox source code, evaluating expressions, executing statements,
 variables and lexical scope, control flow, functions, closures, and recursion. It also supports object-oriented features
-including classes, instances, fields, methods, `this`, and initializers. A resolver handles lexical scope before 
-interpretation, and the interpreter reports scanning, syntax, resolution, and runtime errors.
+including classes, instances, fields, methods, `this`, initializers, inheritance, and superclass method access using `super`.
+A resolver handles lexical scope before interpretation, and the interpreter reports scanning, syntax, resolution, and
+runtime errors.
 
 ### Limitations 
-Features introduced after Chapter 12 of *Crafting Interpreters* have not yet been implemented.
-
+No known deficiencies.
 ---
 
 ## Requirements 
@@ -165,16 +164,22 @@ lox-interpreter/
             │   ├── duplicate_local.lox
             │   ├── for.lox
             │   ├── if_else.lox
+            │   ├── inheritance.lox
             │   ├── initializer_return_value.lox
             │   ├── invalid.lox
+            │   ├── invalid_superclass.lox
             │   ├── logical.lox
             │   ├── own_initializer.lox
             │   ├── resolver_closure.lox
             │   ├── runtime_error.lox
+            │   ├── self_inheritance.lox
+            │   ├── super_outside_class.lox
+            │   ├── super_without_superclass.lox
             │   ├── test_input.lox
             │   ├── this_outside_class.lox
             │   ├── top_level_return.lox
             │   ├── undefined_property.lox
+            │   ├── undefined_super_method.lox
             │   ├── undefined_variable.lox
             │   ├── variables.lox
             │   └── while.lox

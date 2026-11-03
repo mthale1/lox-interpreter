@@ -103,3 +103,19 @@ print breakfast.meat;
 
 var serveBreakfast = breakfast.serve;
 print serveBreakfast();
+
+class Parent {
+    method() {
+        return "parent";
+    }
+}
+
+class Child < Parent {
+    method() {
+        return super.method() + " child";
+    }
+}
+
+var child = Child();
+
+print child.method();

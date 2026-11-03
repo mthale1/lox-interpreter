@@ -12,6 +12,7 @@ class LoxInstanceTest {
     fun stringRepresentationUsesClassName() {
         val klass = LoxClass(
             "Breakfast",
+            null,
             emptyMap()
         )
 
@@ -27,6 +28,7 @@ class LoxInstanceTest {
     fun setsAndGetsField() {
         val klass = LoxClass(
             "Breakfast",
+            null,
             emptyMap()
         )
 
@@ -51,6 +53,7 @@ class LoxInstanceTest {
     fun fieldCanBeUpdated() {
         val klass = LoxClass(
             "Breakfast",
+            null,
             emptyMap()
         )
 
@@ -76,6 +79,7 @@ class LoxInstanceTest {
     fun fieldCanStoreNil() {
         val klass = LoxClass(
             "Breakfast",
+            null,
             emptyMap()
         )
 
@@ -97,6 +101,7 @@ class LoxInstanceTest {
     fun undefinedPropertyThrowsRuntimeError() {
         val klass = LoxClass(
             "Breakfast",
+            null,
             emptyMap()
         )
 
@@ -137,6 +142,7 @@ class LoxInstanceTest {
 
         val klass = LoxClass(
             "Breakfast",
+            null,
             mapOf("serve" to method)
         )
 
@@ -177,6 +183,7 @@ class LoxInstanceTest {
 
         val klass = LoxClass(
             "Breakfast",
+            null,
             mapOf("getThis" to method)
         )
 
@@ -210,6 +217,7 @@ class LoxInstanceTest {
 
         val klass = LoxClass(
             "Breakfast",
+            null,
             mapOf("serve" to method)
         )
 

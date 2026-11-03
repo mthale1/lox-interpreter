@@ -36,6 +36,7 @@ class ExprTest {
         override fun visitLogicalExpr(expr: Expr.Logical) = "logical"
         override fun visitGetExpr(expr: Expr.Get) = "get"
         override fun visitSetExpr(expr: Expr.Set) = "set"
+        override fun visitSuperExpr(expr: Expr.Super) = "super"
         override fun visitThisExpr(expr: Expr.This) = "this"
     }
 
@@ -370,6 +371,44 @@ class ExprTest {
         )
 
         assertEquals("this", expression.accept(visitor))
+    }
+
+    @Test
+    fun superStoresKeywordAndMethod() {
+        val keyword = Token(
+            TokenType.SUPER,
+            "super",
+            null,
+            1
+        )
+
+        val method = Token(
+            TokenType.IDENTIFIER,
+            "method",
+            null,
+            1
+        )
+
+        val expression = Expr.Super(
+            keyword,
+            method
+        )
+
+        assertEquals(keyword, expression.keyword)
+        assertEquals(method, expression.method)
+    }
+
+    @Test
+    fun superAcceptsVisitor() {
+        val expression = Expr.Super(
+            Token(TokenType.SUPER, "super", null, 1),
+            Token(TokenType.IDENTIFIER, "method", null, 1)
+        )
+
+        assertEquals(
+            "super",
+            expression.accept(visitor)
+        )
     }
 
 }

@@ -12,6 +12,7 @@ class LoxClassTest {
     fun stringRepresentationUsesClassName() {
         val klass = LoxClass(
             "Breakfast",
+            null,
             emptyMap()
         )
 
@@ -22,6 +23,7 @@ class LoxClassTest {
     fun classWithoutInitializerHasZeroArity() {
         val klass = LoxClass(
             "Breakfast",
+            null,
             emptyMap()
         )
 
@@ -32,6 +34,7 @@ class LoxClassTest {
     fun callingClassCreatesInstance() {
         val klass = LoxClass(
             "Breakfast",
+            null,
             emptyMap()
         )
 
@@ -60,6 +63,7 @@ class LoxClassTest {
 
         val klass = LoxClass(
             "Breakfast",
+            null,
             mapOf("serve" to method)
         )
 
@@ -73,6 +77,7 @@ class LoxClassTest {
     fun findMethodReturnsNullWhenMethodDoesNotExist() {
         val klass = LoxClass(
             "Breakfast",
+            null,
             emptyMap()
         )
 
@@ -98,6 +103,7 @@ class LoxClassTest {
 
         val klass = LoxClass(
             "Breakfast",
+            null,
             mapOf("init" to initializer)
         )
 
@@ -135,6 +141,7 @@ class LoxClassTest {
 
         val classStatement = Stmt.Class(
             Token(TokenType.IDENTIFIER, "Breakfast", null, 1),
+            null,
             listOf(initializer)
         )
 
@@ -150,6 +157,7 @@ class LoxClassTest {
 
         val klass = LoxClass(
             "Breakfast",
+            null,
             mapOf("init" to function)
         )
 
@@ -165,6 +173,101 @@ class LoxClassTest {
             result.get(
                 Token(TokenType.IDENTIFIER, "meat", null, 1)
             )
+        )
+    }
+
+    @Test
+    fun findMethodReturnsInheritedMethod() {
+        val declaration = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "serve", null, 1),
+            emptyList(),
+            emptyList()
+        )
+
+        val method = LoxFunction(
+            declaration,
+            Environment(),
+            false
+        )
+
+        val superclass = LoxClass(
+            "Breakfast",
+            null,
+            mapOf("serve" to method)
+        )
+
+        val subclass = LoxClass(
+            "Brunch",
+            superclass,
+            emptyMap()
+        )
+
+        assertSame(
+            method,
+            subclass.findMethod("serve")
+        )
+    }
+
+    @Test
+    fun subclassMethodOverridesSuperclassMethod() {
+        val superclassDeclaration = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "serve", null, 1),
+            emptyList(),
+            emptyList()
+        )
+
+        val superclassMethod = LoxFunction(
+            superclassDeclaration,
+            Environment(),
+            false
+        )
+
+        val subclassDeclaration = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "serve", null, 1),
+            emptyList(),
+            emptyList()
+        )
+
+        val subclassMethod = LoxFunction(
+            subclassDeclaration,
+            Environment(),
+            false
+        )
+
+        val superclass = LoxClass(
+            "Breakfast",
+            null,
+            mapOf("serve" to superclassMethod)
+        )
+
+        val subclass = LoxClass(
+            "Brunch",
+            superclass,
+            mapOf("serve" to subclassMethod)
+        )
+
+        assertSame(
+            subclassMethod,
+            subclass.findMethod("serve")
+        )
+    }
+
+    @Test
+    fun findMethodReturnsNullWhenMethodDoesNotExistInClassHierarchy() {
+        val superclass = LoxClass(
+            "Breakfast",
+            null,
+            emptyMap()
+        )
+
+        val subclass = LoxClass(
+            "Brunch",
+            superclass,
+            emptyMap()
+        )
+
+        assertNull(
+            subclass.findMethod("serve")
         )
     }
 }

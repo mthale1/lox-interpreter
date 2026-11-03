@@ -595,4 +595,141 @@ class LoxIntegrationTest {
             )
         )
     }
+
+    @Test
+    fun runsInheritanceAndSuper() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/inheritance.lox"
+        ).start()
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+
+        assertEquals(
+            """
+        Hello from parent
+        Parent
+        Child
+        Hello from parent
+        inherited value
+        """.trimIndent(),
+            output.trim()
+        )
+    }
+
+    @Test
+    fun exitsWithErrorForSelfInheritance() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/self_inheritance.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(65, exitCode)
+
+        assertTrue(
+            errorOutput.contains(
+                "A class can't inherit from itself."
+            )
+        )
+    }
+
+    @Test
+    fun exitsWithErrorForSuperOutsideClass() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/super_outside_class.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(65, exitCode)
+
+        assertTrue(
+            errorOutput.contains(
+                "Can't use 'super' outside of a class."
+            )
+        )
+    }
+
+    @Test
+    fun exitsWithErrorForSuperWithoutSuperclass() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/super_without_superclass.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(65, exitCode)
+
+        assertTrue(
+            errorOutput.contains(
+                "Can't use 'super' in a class with no superclass."
+            )
+        )
+    }
+
+    @Test
+    fun exitsWithErrorForInvalidSuperclass() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/invalid_superclass.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(70, exitCode)
+
+        assertTrue(
+            errorOutput.contains(
+                "Superclass must be a class."
+            )
+        )
+    }
+
+    @Test
+    fun exitsWithErrorForUndefinedSuperMethod() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/undefined_super_method.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(70, exitCode)
+
+        assertTrue(
+            errorOutput.contains(
+                "Undefined property 'method'."
+            )
+        )
+    }
 }

@@ -31,6 +31,8 @@ AstPrinterTest > printsSetExpressions() PASSED
 
 AstPrinterTest > printsNestedExpression() PASSED
 
+AstPrinterTest > printsSuperExpressions() PASSED
+
 AstPrinterTest > printsBinaryOperators() PASSED
 
 AstPrinterTest > printsThisExpressions() PASSED
@@ -71,6 +73,8 @@ ExprTest > getAcceptsVisitor() PASSED
 
 ExprTest > unaryStoresOperatorsAndExpressions() PASSED
 
+ExprTest > superStoresKeywordAndMethod() PASSED
+
 ExprTest > variableAcceptsVisitor() PASSED
 
 ExprTest > groupingAcceptsVisitor() PASSED
@@ -82,6 +86,8 @@ ExprTest > literalAcceptsVisitor() PASSED
 ExprTest > groupingStoresExpressions() PASSED
 
 ExprTest > thisStoresKeyword() PASSED
+
+ExprTest > superAcceptsVisitor() PASSED
 
 ExprTest > variableStoresNames() PASSED
 
@@ -153,6 +159,8 @@ InterpreterTest > evaluatesEquality() PASSED
 
 InterpreterTest > concatenatesStrings() PASSED
 
+InterpreterTest > rejectsNonClassSuperclass() PASSED
+
 InterpreterTest > evaluatesUnaryMinus() PASSED
 
 InterpreterTest > logicalAndSkipsRightWhenLeftIsFalse() PASSED
@@ -186,6 +194,10 @@ InterpreterTest > evaluatesNestedExpressions() PASSED
 InterpreterTest > evaluatesUninitializedVariables() PASSED
 
 InterpreterTest > evaluatesAssignmentExpressions() PASSED
+
+InterpreterTest > subclassInheritsSuperclassMethod() PASSED
+
+InterpreterTest > superCallsSuperclassMethod() PASSED
 
 InterpreterTest > logicalOrSkipsRightWhenLeftIsTrue() PASSED
 
@@ -221,11 +233,15 @@ InterpreterTest > evaluatesGreaterThan() PASSED
 
 InterpreterTest > rejectsCallingNonCallableValue() PASSED
 
+InterpreterTest > subclassInheritsInitializer() PASSED
+
 InterpreterTest > methodCanAccessInstanceFieldThroughThis() PASSED
 
 InterpreterTest > callingClassCreatesInstance() PASSED
 
 InterpreterTest > assignmentsUpdateVariables() PASSED
+
+InterpreterTest > rejectsUndefinedSuperclassMethod() PASSED
 
 InterpreterTest > ifDoesNothingWhenConditionIsFalseWithoutElse() PASSED
 
@@ -235,11 +251,15 @@ InterpreterTest > throwsRuntimeErrorForUndefinedVariable() PASSED
 
 InterpreterTest > setsAndGetsInstanceField() PASSED
 
+InterpreterTest > subclassOverridesSuperclassMethod() PASSED
+
 LoxClassTest > findMethodReturnsNullWhenMethodDoesNotExist() PASSED
 
 LoxClassTest > findMethodReturnsMethod() PASSED
 
 LoxClassTest > initializerDeterminesClassArity() PASSED
+
+LoxClassTest > findMethodReturnsInheritedMethod() PASSED
 
 LoxClassTest > classWithoutInitializerHasZeroArity() PASSED
 
@@ -247,7 +267,11 @@ LoxClassTest > stringRepresentationUsesClassName() PASSED
 
 LoxClassTest > callingClassRunsInitializer() PASSED
 
+LoxClassTest > subclassMethodOverridesSuperclassMethod() PASSED
+
 LoxClassTest > callingClassCreatesInstance() PASSED
+
+LoxClassTest > findMethodReturnsNullWhenMethodDoesNotExistInClassHierarchy() PASSED
 
 LoxInstanceTest > fieldCanBeUpdated() PASSED
 
@@ -279,11 +303,17 @@ LoxIntegrationTest > runsWhileLoops() PASSED
 
 LoxIntegrationTest > runsVariableDeclarationsAndAssignments() PASSED
 
+LoxIntegrationTest > exitsWithErrorForSuperWithoutSuperclass() PASSED
+
 LoxIntegrationTest > exitsWithErrorForThisOutsideClass() PASSED
 
 LoxIntegrationTest > exitsWithErrorForDuplicateLocalVariable() PASSED
 
+LoxIntegrationTest > exitsWithErrorForSuperOutsideClass() PASSED
+
 LoxIntegrationTest > interactivePromptContinuesAfterError() PASSED
+
+LoxIntegrationTest > exitsWithErrorForSelfInheritance() PASSED
 
 LoxIntegrationTest > runsLoxFile() PASSED
 
@@ -299,6 +329,8 @@ LoxIntegrationTest > runsLogicalExpressions() PASSED
 
 LoxIntegrationTest > exitsWithErrorForInvalidLoxFile() PASSED
 
+LoxIntegrationTest > exitsWithErrorForInvalidSuperclass() PASSED
+
 LoxIntegrationTest > runsIfElseStatements() PASSED
 
 LoxIntegrationTest > exitsWithUsageErrorForTooManyArguments() PASSED
@@ -311,7 +343,11 @@ LoxIntegrationTest > runsForLoops() PASSED
 
 LoxIntegrationTest > assignsToResolvedLocalVariable() PASSED
 
+LoxIntegrationTest > runsInheritanceAndSuper() PASSED
+
 LoxIntegrationTest > exitsWithErrorForUndefinedVariable() PASSED
+
+LoxIntegrationTest > exitsWithErrorForUndefinedSuperMethod() PASSED
 
 LoxIntegrationTest > functionWithoutReturnProducesNil() PASSED
 
@@ -374,6 +410,8 @@ ParserTest > parsesEmptyBlock() PASSED
 ParserTest > parsesNestedUnaryExpressions() PASSED
 
 ParserTest > parsesForStatementWithoutIncrement() PASSED
+
+ParserTest > parsesSuperMethodCall() PASSED
 
 ParserTest > parsesMethodCall() PASSED
 
@@ -479,9 +517,13 @@ ParserTest > parsesWhileStatement() PASSED
 
 ParserTest > parsesWhileWithBlockBody() PASSED
 
+ParserTest > parsesSuperExpression() PASSED
+
 ParserTest > parsesGroupingExpressions() PASSED
 
 ParserTest > parsesFactorExpressions() PASSED
+
+ParserTest > parsesClassWithSuperclass() PASSED
 
 ParserTest > parsesReturnWithoutValue() PASSED
 
@@ -509,11 +551,15 @@ ResolverTest > allowsInitializerWithoutReturnValue() PASSED
 
 ResolverTest > rejectsReturnValueFromInitializer() PASSED
 
+ResolverTest > rejectsSuperOutsideClass() PASSED
+
 ResolverTest > rejectsDuplicateVariableInSameScope() PASSED
 
 ResolverTest > allowsVariableShadowingInNestedScope() PASSED
 
 ResolverTest > resolvesThisInsideNestedFunctionInMethod() PASSED
+
+ResolverTest > resolvesSuperInsideSubclass() PASSED
 
 ResolverTest > rejectsReturnFromTopLevelCode() PASSED
 
@@ -521,9 +567,15 @@ ResolverTest > resolvesFunctionParameters() PASSED
 
 ResolverTest > allowsReturnInsideFunction() PASSED
 
+ResolverTest > resolvesSubclass() PASSED
+
+ResolverTest > rejectsClassInheritingFromItself() PASSED
+
 ResolverTest > allowsReturnValueFromNormalMethod() PASSED
 
 ResolverTest > resolvesNestedFunctionScopes() PASSED
+
+ResolverTest > rejectsSuperInClassWithoutSuperclass() PASSED
 
 ScannerTest > scansTokens() PASSED
 
@@ -583,6 +635,8 @@ StmtTest > blockAcceptsVisitor() PASSED
 
 StmtTest > blockStoresEmptyStatementList() PASSED
 
+StmtTest > classStoresSuperclass() PASSED
+
 StmtTest > varAcceptsVisitor() PASSED
 
 StmtTest > ifStoresConditionAndBranches() PASSED
@@ -617,6 +671,6 @@ GenerateAstTest > generatesStatementFields() PASSED
 
 GenerateAstTest > generatesStatementAcceptMethods() PASSED
 
-BUILD SUCCESSFUL in 1m 4s
+BUILD SUCCESSFUL in 55s
 5 actionable tasks: 5 executed
 Configuration cache entry reused.

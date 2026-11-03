@@ -271,4 +271,91 @@ class ResolverTest {
 
         assertTrue(error.isEmpty())
     }
+
+    @Test
+    fun resolvesSubclass() {
+        val error = resolve(
+            """
+        class Breakfast {}
+
+        class Brunch < Breakfast {
+            serve() {
+                print this;
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertTrue(error.isEmpty())
+    }
+
+    @Test
+    fun rejectsClassInheritingFromItself() {
+        val error = resolve(
+            """
+        class Breakfast < Breakfast {}
+        """.trimIndent()
+        )
+
+        assertTrue(
+            error.contains(
+                "A class can't inherit from itself."
+            )
+        )
+    }
+
+    @Test
+    fun resolvesSuperInsideSubclass() {
+        val error = resolve(
+            """
+        class Breakfast {
+            serve() {
+                print "breakfast";
+            }
+        }
+
+        class Brunch < Breakfast {
+            serve() {
+                super.serve();
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertTrue(error.isEmpty())
+    }
+
+    @Test
+    fun rejectsSuperOutsideClass() {
+        val error = resolve(
+            """
+        super.serve();
+        """.trimIndent()
+        )
+
+        assertTrue(
+            error.contains(
+                "Can't use 'super' outside of a class."
+            )
+        )
+    }
+
+    @Test
+    fun rejectsSuperInClassWithoutSuperclass() {
+        val error = resolve(
+            """
+        class Breakfast {
+            serve() {
+                super.serve();
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertTrue(
+            error.contains(
+                "Can't use 'super' in a class with no superclass."
+            )
+        )
+    }
 }

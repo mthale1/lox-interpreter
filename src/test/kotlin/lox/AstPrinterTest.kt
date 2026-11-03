@@ -229,4 +229,26 @@ class AstPrinterTest {
             Expr.This(keyword)
         )
     }
+
+    @Test
+    fun printsSuperExpressions() {
+        val keyword = Token(
+            TokenType.SUPER,
+            "super",
+            null,
+            1
+        )
+
+        val method = Token(
+            TokenType.IDENTIFIER,
+            "method",
+            null,
+            1
+        )
+
+        assertPrint(
+            "(super.method)",
+            Expr.Super(keyword, method)
+        )
+    }
 }

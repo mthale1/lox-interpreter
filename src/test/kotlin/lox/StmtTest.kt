@@ -294,16 +294,46 @@ class StmtTest {
             )
         )
 
-        val statement = Stmt.Class(name, methods)
+        val statement = Stmt.Class(name,null, methods)
 
         assertEquals(name, statement.name)
         assertEquals(methods, statement.methods)
     }
 
     @Test
+    fun classStoresSuperclass() {
+        val name = Token(
+            TokenType.IDENTIFIER,
+            "Child",
+            null,
+            1
+        )
+
+        val superclass = Expr.Variable(
+            Token(
+                TokenType.IDENTIFIER,
+                "Parent",
+                null,
+                1
+            )
+        )
+
+        val statement = Stmt.Class(
+            name,
+            superclass,
+            emptyList()
+        )
+
+        assertEquals(name, statement.name)
+        assertEquals(superclass, statement.superclass)
+        assertEquals(emptyList(), statement.methods)
+    }
+
+    @Test
     fun classAcceptsVisitor() {
         val statement = Stmt.Class(
             Token(TokenType.IDENTIFIER, "Breakfast", null, 1),
+            null,
             emptyList()
         )
 
