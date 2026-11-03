@@ -157,4 +157,118 @@ class ResolverTest {
 
         assertTrue(error.isEmpty())
     }
+
+    @Test
+    fun resolvesClassDeclaration() {
+        val error = resolve(
+            """
+        class Breakfast {
+            cook() {
+                print "eggs";
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertTrue(error.isEmpty())
+    }
+
+    @Test
+    fun resolvesThisInsideMethod() {
+        val error = resolve(
+            """
+        class Breakfast {
+            serve() {
+                print this;
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertTrue(error.isEmpty())
+    }
+
+    @Test
+    fun resolvesThisInsideNestedFunctionInMethod() {
+        val error = resolve(
+            """
+        class Breakfast {
+            serve() {
+                fun showThis() {
+                    print this;
+                }
+
+                showThis();
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertTrue(error.isEmpty())
+    }
+
+    @Test
+    fun rejectsThisOutsideClass() {
+        val error = resolve(
+            """
+        print this;
+        """.trimIndent()
+        )
+
+        assertTrue(
+            error.contains(
+                "Can't use 'this' outside of a class."
+            )
+        )
+    }
+
+    @Test
+    fun allowsInitializerWithoutReturnValue() {
+        val error = resolve(
+            """
+        class Breakfast {
+            init(meat) {
+                this.meat = meat;
+                return;
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertTrue(error.isEmpty())
+    }
+
+    @Test
+    fun rejectsReturnValueFromInitializer() {
+        val error = resolve(
+            """
+        class Breakfast {
+            init() {
+                return "something else";
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertTrue(
+            error.contains(
+                "Can't return a value from an initializer."
+            )
+        )
+    }
+
+    @Test
+    fun allowsReturnValueFromNormalMethod() {
+        val error = resolve(
+            """
+        class Breakfast {
+            serve() {
+                return "breakfast";
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertTrue(error.isEmpty())
+    }
 }

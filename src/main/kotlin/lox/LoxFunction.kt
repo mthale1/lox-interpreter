@@ -2,7 +2,8 @@ package lox
 
 class LoxFunction(
     private val declaration: Stmt.Function,
-    private val closure: Environment
+    private val closure: Environment,
+    private val isInitializer: Boolean
 ) : LoxCallable {
 
     override fun call(
@@ -21,7 +22,15 @@ class LoxFunction(
         try {
             interpreter.executeBlock(declaration.body, environment)
         } catch (returnValue: Return) {
+            if (isInitializer) {
+                return closure.getAt(0, "this")
+            }
+
             return returnValue.value
+        }
+
+        if (isInitializer) {
+            return closure.getAt(0, "this")
         }
 
         return null
@@ -33,5 +42,16 @@ class LoxFunction(
 
     override fun toString(): String {
         return "<fn ${declaration.name.lexeme}>"
+    }
+
+    fun bind(instance: LoxInstance): LoxFunction {
+        val environment = Environment(closure)
+        environment.define("this", instance)
+
+        return LoxFunction(
+            declaration,
+            environment,
+            isInitializer
+        )
     }
 }

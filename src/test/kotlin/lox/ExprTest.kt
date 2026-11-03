@@ -34,6 +34,9 @@ class ExprTest {
         override fun visitVariableExpr(expr: Expr.Variable) = "variable"
         override fun visitAssignExpr(expr: Expr.Assign) = "assign"
         override fun visitLogicalExpr(expr: Expr.Logical) = "logical"
+        override fun visitGetExpr(expr: Expr.Get) = "get"
+        override fun visitSetExpr(expr: Expr.Set) = "set"
+        override fun visitThisExpr(expr: Expr.This) = "this"
     }
 
     @Test
@@ -296,6 +299,77 @@ class ExprTest {
         )
 
         assertEquals("call", expression.accept(visitor))
+    }
+
+    @Test
+    fun getStoresObjectAndName() {
+        val obj = Expr.Variable(
+            Token(TokenType.IDENTIFIER, "person", null, 1)
+        )
+        val name = Token(TokenType.IDENTIFIER, "name", null, 1)
+
+        val expression = Expr.Get(obj, name)
+
+        assertEquals(obj, expression.obj)
+        assertEquals(name, expression.name)
+    }
+
+    @Test
+    fun getAcceptsVisitor() {
+        val expression = Expr.Get(
+            Expr.Variable(
+                Token(TokenType.IDENTIFIER, "person", null, 1)
+            ),
+            Token(TokenType.IDENTIFIER, "name", null, 1)
+        )
+
+        assertEquals("get", expression.accept(visitor))
+    }
+
+    @Test
+    fun setStoresObjectNameAndValue() {
+        val obj = Expr.Variable(
+            Token(TokenType.IDENTIFIER, "person", null, 1)
+        )
+        val name = Token(TokenType.IDENTIFIER, "name", null, 1)
+        val value = Expr.Literal("Makenzie")
+
+        val expression = Expr.Set(obj, name, value)
+
+        assertEquals(obj, expression.obj)
+        assertEquals(name, expression.name)
+        assertEquals(value, expression.value)
+    }
+
+    @Test
+    fun setAcceptsVisitor() {
+        val expression = Expr.Set(
+            Expr.Variable(
+                Token(TokenType.IDENTIFIER, "person", null, 1)
+            ),
+            Token(TokenType.IDENTIFIER, "name", null, 1),
+            Expr.Literal("Makenzie")
+        )
+
+        assertEquals("set", expression.accept(visitor))
+    }
+
+    @Test
+    fun thisStoresKeyword() {
+        val keyword = Token(TokenType.THIS, "this", null, 1)
+
+        val expression = Expr.This(keyword)
+
+        assertEquals(keyword, expression.keyword)
+    }
+
+    @Test
+    fun thisAcceptsVisitor() {
+        val expression = Expr.This(
+            Token(TokenType.THIS, "this", null, 1)
+        )
+
+        assertEquals("this", expression.accept(visitor))
     }
 
 }

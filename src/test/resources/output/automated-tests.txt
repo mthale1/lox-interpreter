@@ -9,7 +9,6 @@ Reusing configuration cache.
 > Task :compileTestKotlin
 > Task :compileTestJava NO-SOURCE
 > Task :testClasses
-
 > Task :test
 
 AstPrinterTest > printsUnaryExpressions() PASSED
@@ -28,11 +27,17 @@ AstPrinterTest > printsLiterals() PASSED
 
 AstPrinterTest > printsAssignmentExpressions() PASSED
 
+AstPrinterTest > printsSetExpressions() PASSED
+
 AstPrinterTest > printsNestedExpression() PASSED
 
 AstPrinterTest > printsBinaryOperators() PASSED
 
+AstPrinterTest > printsThisExpressions() PASSED
+
 AstPrinterTest > printsBinaryExpressions() PASSED
+
+AstPrinterTest > printsGetExpressions() PASSED
 
 EnvironmentTest > getsVariableFromOuterEnvironment() PASSED
 
@@ -62,6 +67,8 @@ ExprTest > assignStoresNamesAndValues() PASSED
 
 ExprTest > callStoresCalleeParenAndArguments() PASSED
 
+ExprTest > getAcceptsVisitor() PASSED
+
 ExprTest > unaryStoresOperatorsAndExpressions() PASSED
 
 ExprTest > variableAcceptsVisitor() PASSED
@@ -74,6 +81,8 @@ ExprTest > literalAcceptsVisitor() PASSED
 
 ExprTest > groupingStoresExpressions() PASSED
 
+ExprTest > thisStoresKeyword() PASSED
+
 ExprTest > variableStoresNames() PASSED
 
 ExprTest > logicalStoresExpressionsAndOperator() PASSED
@@ -82,13 +91,21 @@ ExprTest > callAcceptsVisitor() PASSED
 
 ExprTest > logicalAcceptsVisitor() PASSED
 
+ExprTest > thisAcceptsVisitor() PASSED
+
 ExprTest > binaryStoresExpressionsAndOperator() PASSED
+
+ExprTest > setStoresObjectNameAndValue() PASSED
+
+ExprTest > getStoresObjectAndName() PASSED
 
 ExprTest > literalStoresValues() PASSED
 
 ExprTest > assignAcceptsVisitor() PASSED
 
 ExprTest > unaryAcceptsVisitor() PASSED
+
+ExprTest > setAcceptsVisitor() PASSED
 
 ExprTest > binaryAcceptsVisitor() PASSED
 
@@ -106,9 +123,15 @@ FunctionTest > callReturnsFunctionReturnValue() PASSED
 
 FunctionTest > arityMatchesParameterCount() PASSED
 
+FunctionTest > initializerReturnsInstanceWithoutExplicitReturn() PASSED
+
 FunctionTest > canBeThrownAndCaught() PASSED
 
 FunctionTest > callableProvidesArityAndCall() PASSED
+
+FunctionTest > initializerReturnsInstanceAfterEmptyReturn() PASSED
+
+FunctionTest > bindMakesThisAvailableToMethod() PASSED
 
 InterpreterTest > ifExecutesElseBranchWhenConditionIsFalse() PASSED
 
@@ -136,7 +159,13 @@ InterpreterTest > logicalAndSkipsRightWhenLeftIsFalse() PASSED
 
 InterpreterTest > functionDeclarationDefinesFunction() PASSED
 
+InterpreterTest > initializerSetsInstanceField() PASSED
+
+InterpreterTest > classDeclarationDefinesClass() PASSED
+
 InterpreterTest > evaluatesSubtraction() PASSED
+
+InterpreterTest > rejectsSettingFieldOnNonInstance() PASSED
 
 InterpreterTest > evaluatesLogicalOr() PASSED
 
@@ -162,6 +191,8 @@ InterpreterTest > logicalOrSkipsRightWhenLeftIsTrue() PASSED
 
 InterpreterTest > evaluatesLessThan() PASSED
 
+InterpreterTest > methodCanAccessThis() PASSED
+
 InterpreterTest > throwsRuntimeErrorWhenAssigningUndefinedVariable() PASSED
 
 InterpreterTest > evaluatesMultiplication() PASSED
@@ -184,9 +215,15 @@ InterpreterTest > binaryOperatorsRejectNonNumberOperands() PASSED
 
 InterpreterTest > evaluatesLessThanOrEqual() PASSED
 
+InterpreterTest > rejectsGettingPropertyFromNonInstance() PASSED
+
 InterpreterTest > evaluatesGreaterThan() PASSED
 
 InterpreterTest > rejectsCallingNonCallableValue() PASSED
+
+InterpreterTest > methodCanAccessInstanceFieldThroughThis() PASSED
+
+InterpreterTest > callingClassCreatesInstance() PASSED
 
 InterpreterTest > assignmentsUpdateVariables() PASSED
 
@@ -195,6 +232,40 @@ InterpreterTest > ifDoesNothingWhenConditionIsFalseWithoutElse() PASSED
 InterpreterTest > callsNativeClockFunction() PASSED
 
 InterpreterTest > throwsRuntimeErrorForUndefinedVariable() PASSED
+
+InterpreterTest > setsAndGetsInstanceField() PASSED
+
+LoxClassTest > findMethodReturnsNullWhenMethodDoesNotExist() PASSED
+
+LoxClassTest > findMethodReturnsMethod() PASSED
+
+LoxClassTest > initializerDeterminesClassArity() PASSED
+
+LoxClassTest > classWithoutInitializerHasZeroArity() PASSED
+
+LoxClassTest > stringRepresentationUsesClassName() PASSED
+
+LoxClassTest > callingClassRunsInitializer() PASSED
+
+LoxClassTest > callingClassCreatesInstance() PASSED
+
+LoxInstanceTest > fieldCanBeUpdated() PASSED
+
+LoxInstanceTest > methodIsBoundToInstance() PASSED
+
+LoxInstanceTest > getsMethodFromClass() PASSED
+
+LoxInstanceTest > fieldCanStoreNil() PASSED
+
+LoxInstanceTest > stringRepresentationUsesClassName() PASSED
+
+LoxInstanceTest > undefinedPropertyThrowsRuntimeError() PASSED
+
+LoxInstanceTest > fieldShadowsMethodWithSameName() PASSED
+
+LoxInstanceTest > setsAndGetsField() PASSED
+
+LoxIntegrationTest > exitsWithErrorForReturningValueFromInitializer() PASSED
 
 LoxIntegrationTest > runsBlockScope() PASSED
 
@@ -208,6 +279,8 @@ LoxIntegrationTest > runsWhileLoops() PASSED
 
 LoxIntegrationTest > runsVariableDeclarationsAndAssignments() PASSED
 
+LoxIntegrationTest > exitsWithErrorForThisOutsideClass() PASSED
+
 LoxIntegrationTest > exitsWithErrorForDuplicateLocalVariable() PASSED
 
 LoxIntegrationTest > interactivePromptContinuesAfterError() PASSED
@@ -217,6 +290,8 @@ LoxIntegrationTest > runsLoxFile() PASSED
 LoxIntegrationTest > exitsWithErrorForTopLevelReturn() PASSED
 
 LoxIntegrationTest > returnExitsFunctionEarly() PASSED
+
+LoxIntegrationTest > runsClassesInstancesMethodsAndInitializers() PASSED
 
 LoxIntegrationTest > runsClosure() PASSED
 
@@ -240,6 +315,8 @@ LoxIntegrationTest > exitsWithErrorForUndefinedVariable() PASSED
 
 LoxIntegrationTest > functionWithoutReturnProducesNil() PASSED
 
+LoxIntegrationTest > exitsWithErrorForUndefinedProperty() PASSED
+
 LoxIntegrationTest > runsInteractivePrompt() PASSED
 
 LoxIntegrationTest > exitsWithRuntimeError() PASSED
@@ -247,6 +324,8 @@ LoxIntegrationTest > exitsWithRuntimeError() PASSED
 LoxIntegrationTest > loxFileProducesExpectedOutput() PASSED
 
 LoxTest > reportsEndOfFileError() PASSED
+
+LoxTest > runsPropertyExpressions() PASSED
 
 LoxTest > reportsLineError() PASSED
 
@@ -257,6 +336,8 @@ LoxTest > runsBinaryExpressions() PASSED
 LoxTest > runsNestedExpressions() PASSED
 
 LoxTest > runsExpressionsWithCorrectPrecedence() PASSED
+
+LoxTest > runsMethodCallExpressions() PASSED
 
 LoxTest > runsOperatorsLeftToRight() PASSED
 
@@ -269,6 +350,8 @@ LoxTest > reportsTokenError() PASSED
 LoxTest > runsGroupedExpressions() PASSED
 
 LoxTest > runsLiteralExpressions() PASSED
+
+LoxTest > runsThisExpressions() PASSED
 
 ParserTest > forStatementUsesConditionForWhile() PASSED
 
@@ -291,6 +374,8 @@ ParserTest > parsesEmptyBlock() PASSED
 ParserTest > parsesNestedUnaryExpressions() PASSED
 
 ParserTest > parsesForStatementWithoutIncrement() PASSED
+
+ParserTest > parsesMethodCall() PASSED
 
 ParserTest > parsesForStatementWithoutInitializer() PASSED
 
@@ -326,6 +411,8 @@ ParserTest > parsesExpressionStatement() PASSED
 
 ParserTest > forStatementAddsIncrementAfterBody() PASSED
 
+ParserTest > parsesClassWithMethods() PASSED
+
 ParserTest > rejectsInvalidAssignmentTarget() PASSED
 
 ParserTest > parsesWhileWithExpressionCondition() PASSED
@@ -340,13 +427,23 @@ ParserTest > rejectsMissingClosingParenthesisAfterForClause() PASSED
 
 ParserTest > parsesMultipleStatements() PASSED
 
+ParserTest > parsesClassDeclaration() PASSED
+
 ParserTest > parsesPrintStatement() PASSED
 
 ParserTest > parsesEqualityExpressions() PASSED
 
 ParserTest > parsesForStatement() PASSED
 
+ParserTest > parsesThisPropertyAccess() PASSED
+
+ParserTest > parsesChainedPropertyGet() PASSED
+
 ParserTest > parsesLogicalOperatorPrecedence() PASSED
+
+ParserTest > parsesInitializerMethod() PASSED
+
+ParserTest > parsesPropertySetWithExpressionValue() PASSED
 
 ParserTest > elseAttachesToNearestIf() PASSED
 
@@ -392,19 +489,39 @@ ParserTest > parsesOperatorPrecedence() PASSED
 
 ParserTest > rejectsMissingVariableInitializer() PASSED
 
+ParserTest > parsesThisExpression() PASSED
+
+ParserTest > parsesPropertyGet() PASSED
+
+ParserTest > parsesPropertySet() PASSED
+
+ResolverTest > rejectsThisOutsideClass() PASSED
+
 ResolverTest > allowsSameVariableNameInDifferentScopes() PASSED
 
 ResolverTest > rejectsVariableInOwnInitializer() PASSED
 
+ResolverTest > resolvesThisInsideMethod() PASSED
+
+ResolverTest > resolvesClassDeclaration() PASSED
+
+ResolverTest > allowsInitializerWithoutReturnValue() PASSED
+
+ResolverTest > rejectsReturnValueFromInitializer() PASSED
+
 ResolverTest > rejectsDuplicateVariableInSameScope() PASSED
 
 ResolverTest > allowsVariableShadowingInNestedScope() PASSED
+
+ResolverTest > resolvesThisInsideNestedFunctionInMethod() PASSED
 
 ResolverTest > rejectsReturnFromTopLevelCode() PASSED
 
 ResolverTest > resolvesFunctionParameters() PASSED
 
 ResolverTest > allowsReturnInsideFunction() PASSED
+
+ResolverTest > allowsReturnValueFromNormalMethod() PASSED
 
 ResolverTest > resolvesNestedFunctionScopes() PASSED
 
@@ -440,6 +557,8 @@ ScannerTest > identifierCannotStartWithNumber() PASSED
 
 StmtTest > functionAcceptsVisitor() PASSED
 
+StmtTest > classStoresNameAndMethods() PASSED
+
 StmtTest > whileAcceptsVisitor() PASSED
 
 StmtTest > varStoresNamesAndInitializers() PASSED
@@ -470,6 +589,8 @@ StmtTest > ifStoresConditionAndBranches() PASSED
 
 StmtTest > varStoresNullInitializer() PASSED
 
+StmtTest > classAcceptsVisitor() PASSED
+
 StmtTest > ifStoresNullElseBranch() PASSED
 
 StmtTest > returnStoresNullValue() PASSED
@@ -496,6 +617,6 @@ GenerateAstTest > generatesStatementFields() PASSED
 
 GenerateAstTest > generatesStatementAcceptMethods() PASSED
 
-BUILD SUCCESSFUL in 9s
+BUILD SUCCESSFUL in 1m 4s
 5 actionable tasks: 5 executed
 Configuration cache entry reused.

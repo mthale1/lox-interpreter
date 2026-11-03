@@ -6,16 +6,70 @@ class Resolver(
 
     private val scopes = mutableListOf<MutableMap<String, Boolean>>()
     private var currentFunction = FunctionType.NONE
+    private var currentClass = ClassType.NONE
 
     private enum class FunctionType {
         NONE,
-        FUNCTION
+        FUNCTION,
+        INITIALIZER,
+        METHOD
+    }
+
+    private enum class ClassType {
+        NONE,
+        CLASS
     }
 
     override fun visitBlockStmt(stmt: Stmt.Block) {
         beginScope()
         resolve(stmt.statements)
         endScope()
+    }
+
+    override fun visitClassStmt(stmt: Stmt.Class) {
+        val enclosingClass = currentClass
+        currentClass = ClassType.CLASS
+
+        declare(stmt.name)
+        define(stmt.name)
+
+        beginScope()
+        scopes.last()["this"] = true
+
+        for (method in stmt.methods) {
+            var declaration = FunctionType.METHOD
+
+            if (method.name.lexeme == "init") {
+                declaration = FunctionType.INITIALIZER
+            }
+
+            resolveFunction(method, declaration)
+        }
+
+        endScope()
+
+        currentClass = enclosingClass
+    }
+
+    override fun visitGetExpr(expr: Expr.Get) {
+        resolve(expr.obj)
+    }
+
+    override fun visitSetExpr(expr: Expr.Set) {
+        resolve(expr.value)
+        resolve(expr.obj)
+    }
+
+    override fun visitThisExpr(expr: Expr.This) {
+        if (currentClass == ClassType.NONE) {
+            Lox.error(
+                expr.keyword,
+                "Can't use 'this' outside of a class."
+            )
+            return
+        }
+
+        resolveLocal(expr, expr.keyword)
     }
 
     fun resolve(statements: List<Stmt>) {
@@ -154,6 +208,13 @@ class Resolver(
         }
 
         if (stmt.value != null) {
+            if (currentFunction == FunctionType.INITIALIZER) {
+                Lox.error(
+                    stmt.keyword,
+                    "Can't return a value from an initializer."
+                )
+            }
+
             resolve(stmt.value)
         }
     }

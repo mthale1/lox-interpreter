@@ -14,6 +14,7 @@ class StmtTest {
         override fun visitReturnStmt(stmt: Stmt.Return) = "return"
         override fun visitVarStmt(stmt: Stmt.Var) = "var"
         override fun visitWhileStmt(stmt: Stmt.While) = "while"
+        override fun visitClassStmt(stmt: Stmt.Class)= "class"
     }
 
     @Test
@@ -274,6 +275,39 @@ class StmtTest {
         )
 
         assertEquals("return", statement.accept(visitor))
+    }
+
+    @Test
+    fun classStoresNameAndMethods() {
+        val name = Token(TokenType.IDENTIFIER, "Breakfast", null, 1)
+
+        val methods = listOf(
+            Stmt.Function(
+                Token(TokenType.IDENTIFIER, "cook", null, 1),
+                emptyList(),
+                emptyList()
+            ),
+            Stmt.Function(
+                Token(TokenType.IDENTIFIER, "serve", null, 1),
+                emptyList(),
+                emptyList()
+            )
+        )
+
+        val statement = Stmt.Class(name, methods)
+
+        assertEquals(name, statement.name)
+        assertEquals(methods, statement.methods)
+    }
+
+    @Test
+    fun classAcceptsVisitor() {
+        val statement = Stmt.Class(
+            Token(TokenType.IDENTIFIER, "Breakfast", null, 1),
+            emptyList()
+        )
+
+        assertEquals("class", statement.accept(visitor))
     }
 
 }

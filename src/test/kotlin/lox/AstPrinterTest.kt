@@ -173,4 +173,60 @@ class AstPrinterTest {
         assertPrint("(call add 1 2)", expression)
     }
 
+    @Test
+    fun printsGetExpressions() {
+        val objectExpression = Expr.Variable(
+            Token(TokenType.IDENTIFIER, "breakfast", null, 1)
+        )
+
+        val name = Token(
+            TokenType.IDENTIFIER,
+            "meat",
+            null,
+            1
+        )
+
+        assertPrint(
+            "(.meat breakfast)",
+            Expr.Get(objectExpression, name)
+        )
+    }
+
+    @Test
+    fun printsSetExpressions() {
+        val objectExpression = Expr.Variable(
+            Token(TokenType.IDENTIFIER, "breakfast", null, 1)
+        )
+
+        val name = Token(
+            TokenType.IDENTIFIER,
+            "meat",
+            null,
+            1
+        )
+
+        assertPrint(
+            "(=meat breakfast bacon)",
+            Expr.Set(
+                objectExpression,
+                name,
+                Expr.Literal("bacon")
+            )
+        )
+    }
+
+    @Test
+    fun printsThisExpressions() {
+        val keyword = Token(
+            TokenType.THIS,
+            "this",
+            null,
+            1
+        )
+
+        assertPrint(
+            "this",
+            Expr.This(keyword)
+        )
+    }
 }

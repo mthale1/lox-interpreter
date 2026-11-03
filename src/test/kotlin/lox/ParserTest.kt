@@ -46,6 +46,19 @@ class ParserTest {
             val callee: ExpectedExpr,
             val arguments: List<ExpectedExpr>
         ) : ExpectedExpr()
+
+        data class Get(
+            val obj: ExpectedExpr,
+            val name: String
+        ) : ExpectedExpr()
+
+        data class Set(
+            val obj: ExpectedExpr,
+            val name: String,
+            val value: ExpectedExpr
+        ) : ExpectedExpr()
+
+        data object This : ExpectedExpr()
     }
 
     // Recursively compares the AST created by the parser to the expected AST.
@@ -101,6 +114,24 @@ class ParserTest {
                 for (i in expected.arguments.indices) {
                     assertExpression(actual.arguments[i], expected.arguments[i])
                 }
+            }
+
+            is ExpectedExpr.Get -> {
+                assertIs<Expr.Get>(actual)
+                assertExpression(actual.obj, expected.obj)
+                assertEquals(expected.name, actual.name.lexeme)
+            }
+
+            is ExpectedExpr.Set -> {
+                assertIs<Expr.Set>(actual)
+                assertExpression(actual.obj, expected.obj)
+                assertEquals(expected.name, actual.name.lexeme)
+                assertExpression(actual.value, expected.value)
+            }
+
+            ExpectedExpr.This -> {
+                assertIs<Expr.This>(actual)
+                assertEquals("this", actual.keyword.lexeme)
             }
         }
     }
@@ -1163,6 +1194,194 @@ class ParserTest {
 
         assertEquals("return", statement.keyword.lexeme)
         assertNull(statement.value)
+    }
+
+    @Test
+    fun parsesClassDeclaration() {
+        val statements = parseStatements(
+            "class Breakfast {}"
+        )
+
+        assertEquals(1, statements.size)
+
+        val klass = statements[0]
+        assertIs<Stmt.Class>(klass)
+
+        assertEquals("Breakfast", klass.name.lexeme)
+        assertEquals(0, klass.methods.size)
+    }
+
+    @Test
+    fun parsesClassWithMethods() {
+        val statements = parseStatements(
+            """
+        class Breakfast {
+            cook() {
+                print "eggs";
+            }
+
+            serve(who) {
+                print who;
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertEquals(1, statements.size)
+
+        val klass = statements[0]
+        assertIs<Stmt.Class>(klass)
+
+        assertEquals("Breakfast", klass.name.lexeme)
+        assertEquals(2, klass.methods.size)
+
+        val cook = klass.methods[0]
+        assertEquals("cook", cook.name.lexeme)
+        assertEquals(0, cook.params.size)
+        assertEquals(1, cook.body.size)
+
+        val serve = klass.methods[1]
+        assertEquals("serve", serve.name.lexeme)
+        assertEquals(1, serve.params.size)
+        assertEquals("who", serve.params[0].lexeme)
+        assertEquals(1, serve.body.size)
+    }
+
+    @Test
+    fun parsesPropertyGet() {
+        val expected = ExpectedExpr.Get(
+            ExpectedExpr.Variable("breakfast"),
+            "meat"
+        )
+
+        assertExpression(
+            parse("breakfast.meat"),
+            expected
+        )
+    }
+
+    @Test
+    fun parsesChainedPropertyGet() {
+        val expected = ExpectedExpr.Get(
+            ExpectedExpr.Get(
+                ExpectedExpr.Variable("breakfast"),
+                "plate"
+            ),
+            "food"
+        )
+
+        assertExpression(
+            parse("breakfast.plate.food"),
+            expected
+        )
+    }
+
+    @Test
+    fun parsesPropertySet() {
+        val expected = ExpectedExpr.Set(
+            ExpectedExpr.Variable("breakfast"),
+            "meat",
+            ExpectedExpr.Literal("sausage")
+        )
+
+        assertExpression(
+            parse("breakfast.meat = \"sausage\""),
+            expected
+        )
+    }
+
+    @Test
+    fun parsesPropertySetWithExpressionValue() {
+        val expected = ExpectedExpr.Set(
+            ExpectedExpr.Variable("object"),
+            "value",
+            ExpectedExpr.Binary(
+                ExpectedExpr.Literal(1.0),
+                TokenType.PLUS,
+                ExpectedExpr.Literal(2.0)
+            )
+        )
+
+        assertExpression(
+            parse("object.value = 1 + 2"),
+            expected
+        )
+    }
+
+    @Test
+    fun parsesMethodCall() {
+        val expected = ExpectedExpr.Call(
+            ExpectedExpr.Get(
+                ExpectedExpr.Variable("breakfast"),
+                "serve"
+            ),
+            emptyList()
+        )
+
+        assertExpression(
+            parse("breakfast.serve()"),
+            expected
+        )
+    }
+
+    @Test
+    fun parsesThisExpression() {
+        assertExpression(
+            parse("this"),
+            ExpectedExpr.This
+        )
+    }
+
+    @Test
+    fun parsesThisPropertyAccess() {
+        val expected = ExpectedExpr.Get(
+            ExpectedExpr.This,
+            "ingredient"
+        )
+
+        assertExpression(
+            parse("this.ingredient"),
+            expected
+        )
+    }
+
+    @Test
+    fun parsesInitializerMethod() {
+        val statements = parseStatements(
+            """
+        class Breakfast {
+            init(meat) {
+                this.meat = meat;
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertEquals(1, statements.size)
+
+        val klass = statements[0]
+        assertIs<Stmt.Class>(klass)
+
+        assertEquals(1, klass.methods.size)
+
+        val initializer = klass.methods[0]
+        assertEquals("init", initializer.name.lexeme)
+        assertEquals(1, initializer.params.size)
+        assertEquals("meat", initializer.params[0].lexeme)
+
+        assertEquals(1, initializer.body.size)
+
+        val body = initializer.body[0]
+        assertIs<Stmt.Expression>(body)
+
+        assertExpression(
+            body.expression,
+            ExpectedExpr.Set(
+                ExpectedExpr.This,
+                "meat",
+                ExpectedExpr.Variable("meat")
+            )
+        )
     }
 
     @Test

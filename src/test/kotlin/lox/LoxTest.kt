@@ -255,4 +255,48 @@ class LoxTest {
         )
     }
 
+    @Test
+    fun runsPropertyExpressions() {
+        assertEquals(
+            "(.meat breakfast)",
+            runExpression("breakfast.meat")
+        )
+
+        assertEquals(
+            "(=meat breakfast bacon)",
+            runExpression("breakfast.meat = bacon")
+        )
+
+        assertEquals(
+            "(.food (.plate breakfast))",
+            runExpression("breakfast.plate.food")
+        )
+    }
+
+    @Test
+    fun runsThisExpressions() {
+        assertEquals(
+            "this",
+            runExpression("this")
+        )
+
+        assertEquals(
+            "(.meat this)",
+            runExpression("this.meat")
+        )
+    }
+
+    @Test
+    fun runsMethodCallExpressions() {
+        assertEquals(
+            "(call (.serve breakfast))",
+            runExpression("breakfast.serve()")
+        )
+
+        assertEquals(
+            "(call (.serve breakfast) bacon eggs)",
+            runExpression("breakfast.serve(bacon, eggs)")
+        )
+    }
+
 }

@@ -19,7 +19,8 @@ class FunctionTest {
 
         val function = LoxFunction(
             declaration,
-            Environment()
+            Environment(),
+            false
         )
 
         assertEquals(2, function.arity())
@@ -52,7 +53,8 @@ class FunctionTest {
 
         val function = LoxFunction(
             declaration,
-            Environment()
+            Environment(),
+            false
         )
 
         assertEquals(
@@ -74,7 +76,8 @@ class FunctionTest {
 
         val function = LoxFunction(
             declaration,
-            Environment()
+            Environment(),
+            false
         )
 
         assertEquals(
@@ -117,7 +120,8 @@ class FunctionTest {
 
         val function = LoxFunction(
             declaration,
-            closure
+            closure,
+            false
         )
 
         assertEquals(
@@ -139,7 +143,8 @@ class FunctionTest {
 
         val function = LoxFunction(
             declaration,
-            Environment()
+            Environment(),
+            false
         )
 
         assertEquals("<fn add>", function.toString())
@@ -193,5 +198,96 @@ class FunctionTest {
         }
 
         assertEquals("hello", returnValue.value)
+    }
+
+    @Test
+    fun bindMakesThisAvailableToMethod() {
+        val thisToken = Token(TokenType.THIS, "this", null, 1)
+        val thisExpression = Expr.This(thisToken)
+
+        val declaration = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "getThis", null, 1),
+            emptyList(),
+            listOf(
+                Stmt.Return(
+                    Token(TokenType.RETURN, "return", null, 1),
+                    thisExpression
+                )
+            )
+        )
+
+        val interpreter = Interpreter()
+        interpreter.resolve(thisExpression, 1)
+
+        val function = LoxFunction(
+            declaration,
+            Environment(),
+            false
+        )
+
+        val klass = LoxClass("Test", emptyMap())
+        val instance = LoxInstance(klass)
+
+        val bound = function.bind(instance)
+
+        assertEquals(
+            instance,
+            bound.call(interpreter, emptyList())
+        )
+    }
+
+    @Test
+    fun initializerReturnsInstanceWithoutExplicitReturn() {
+        val declaration = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "init", null, 1),
+            emptyList(),
+            emptyList()
+        )
+
+        val function = LoxFunction(
+            declaration,
+            Environment(),
+            true
+        )
+
+        val klass = LoxClass("Test", emptyMap())
+        val instance = LoxInstance(klass)
+
+        val bound = function.bind(instance)
+
+        assertEquals(
+            instance,
+            bound.call(Interpreter(), emptyList())
+        )
+    }
+
+    @Test
+    fun initializerReturnsInstanceAfterEmptyReturn() {
+        val declaration = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "init", null, 1),
+            emptyList(),
+            listOf(
+                Stmt.Return(
+                    Token(TokenType.RETURN, "return", null, 1),
+                    null
+                )
+            )
+        )
+
+        val function = LoxFunction(
+            declaration,
+            Environment(),
+            true
+        )
+
+        val klass = LoxClass("Test", emptyMap())
+        val instance = LoxInstance(klass)
+
+        val bound = function.bind(instance)
+
+        assertEquals(
+            instance,
+            bound.call(Interpreter(), emptyList())
+        )
     }
 }

@@ -503,4 +503,96 @@ class LoxIntegrationTest {
             )
         )
     }
+
+    @Test
+    fun runsClassesInstancesMethodsAndInitializers() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/classes.lox"
+        ).start()
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+
+        assertEquals(
+            """
+        Breakfast
+        Breakfast instance
+        bacon
+        toast
+        bacon and toast
+        bacon and toast
+        sausage
+        """.trimIndent(),
+            output.trim()
+        )
+    }
+
+    @Test
+    fun exitsWithErrorForThisOutsideClass() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/this_outside_class.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(65, exitCode)
+        assertTrue(
+            errorOutput.contains(
+                "Can't use 'this' outside of a class."
+            )
+        )
+    }
+
+    @Test
+    fun exitsWithErrorForReturningValueFromInitializer() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/initializer_return_value.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(65, exitCode)
+        assertTrue(
+            errorOutput.contains(
+                "Can't return a value from an initializer."
+            )
+        )
+    }
+
+    @Test
+    fun exitsWithErrorForUndefinedProperty() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox",
+            "src/test/resources/input/undefined_property.lox"
+        ).start()
+
+        val errorOutput = process.errorStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(70, exitCode)
+        assertTrue(
+            errorOutput.contains(
+                "Undefined property 'meat'."
+            )
+        )
+    }
 }

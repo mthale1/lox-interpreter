@@ -47,6 +47,9 @@ class GenerateAstTest {
         assertTrue(content.contains("class Assign("))
         assertTrue(content.contains("class Logical("))
         assertTrue(content.contains("class Variable("))
+        assertTrue(content.contains("class Get("))
+        assertTrue(content.contains("class Set("))
+        assertTrue(content.contains("class This("))
     }
 
     @Test
@@ -62,6 +65,8 @@ class GenerateAstTest {
         assertTrue(content.contains("val paren: Token"))
         assertTrue(content.contains("val arguments: List<Expr>"))
         assertTrue(content.contains("val name: Token"))
+        assertTrue(content.contains("val obj: Expr"))
+        assertTrue(content.contains("val keyword: Token"))
     }
 
     @Test
@@ -77,6 +82,9 @@ class GenerateAstTest {
         assertTrue(content.contains("fun visitAssignExpr(expr: Assign): R"))
         assertTrue(content.contains("fun visitLogicalExpr(expr: Logical): R"))
         assertTrue(content.contains("fun visitVariableExpr(expr: Variable): R"))
+        assertTrue(content.contains("fun visitGetExpr(expr: Get): R"))
+        assertTrue(content.contains("fun visitSetExpr(expr: Set): R"))
+        assertTrue(content.contains("fun visitThisExpr(expr: This): R"))
     }
 
     @Test
@@ -92,6 +100,9 @@ class GenerateAstTest {
         assertTrue(content.contains("return visitor.visitAssignExpr(this)"))
         assertTrue(content.contains("return visitor.visitLogicalExpr(this)"))
         assertTrue(content.contains("return visitor.visitVariableExpr(this)"))
+        assertTrue(content.contains("return visitor.visitGetExpr(this)"))
+        assertTrue(content.contains("return visitor.visitSetExpr(this)"))
+        assertTrue(content.contains("return visitor.visitThisExpr(this)"))
     }
 
     @Test
@@ -106,6 +117,7 @@ class GenerateAstTest {
         assertTrue(content.contains("class Return("))
         assertTrue(content.contains("class Var("))
         assertTrue(content.contains("class While("))
+        assertTrue(content.contains("class Class("))
     }
 
     @Test
@@ -120,6 +132,7 @@ class GenerateAstTest {
         assertTrue(content.contains("fun visitReturnStmt(stmt: Return): R"))
         assertTrue(content.contains("fun visitVarStmt(stmt: Var): R"))
         assertTrue(content.contains("fun visitWhileStmt(stmt: While): R"))
+        assertTrue(content.contains("fun visitClassStmt(stmt: Class): R"))
     }
 
     @Test
@@ -134,6 +147,7 @@ class GenerateAstTest {
         assertTrue(content.contains("return visitor.visitReturnStmt(this)"))
         assertTrue(content.contains("return visitor.visitVarStmt(this)"))
         assertTrue(content.contains("return visitor.visitWhileStmt(this)"))
+        assertTrue(content.contains("return visitor.visitClassStmt(this)"))
     }
 
     @Test
@@ -152,5 +166,6 @@ class GenerateAstTest {
         assertTrue(content.contains("val value: Expr?"))
         assertTrue(content.contains("val initializer: Expr?"))
         assertTrue(content.contains("val body: Stmt"))
+        assertTrue(content.contains("val methods: List<Stmt.Function>"))
     }
 }

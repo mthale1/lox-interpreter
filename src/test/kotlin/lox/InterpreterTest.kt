@@ -1103,4 +1103,283 @@ class InterpreterTest {
             Expr.Assign(name, Expr.Literal(123.0)).accept(interpreter)
         }
     }
+
+    @Test
+    fun classDeclarationDefinesClass() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "Breakfast", null, 1)
+
+        interpreter.visitClassStmt(
+            Stmt.Class(name, emptyList())
+        )
+
+        val klass = Expr.Variable(name).accept(interpreter)
+
+        kotlin.test.assertIs<LoxClass>(klass)
+        assertEquals("Breakfast", klass.toString())
+    }
+
+    @Test
+    fun callingClassCreatesInstance() {
+        val interpreter = Interpreter()
+        val name = Token(TokenType.IDENTIFIER, "Breakfast", null, 1)
+
+        interpreter.visitClassStmt(
+            Stmt.Class(name, emptyList())
+        )
+
+        val call = Expr.Call(
+            Expr.Variable(name),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            emptyList()
+        )
+
+        val instance = call.accept(interpreter)
+
+        kotlin.test.assertIs<LoxInstance>(instance)
+        assertEquals("Breakfast instance", instance.toString())
+    }
+
+    @Test
+    fun setsAndGetsInstanceField() {
+        val interpreter = Interpreter()
+        val klass = LoxClass("Breakfast", emptyMap())
+        val instance = LoxInstance(klass)
+
+        val field = Token(
+            TokenType.IDENTIFIER,
+            "meat",
+            null,
+            1
+        )
+
+        val set = Expr.Set(
+            Expr.Literal(instance),
+            field,
+            Expr.Literal("sausage")
+        )
+
+        assertEquals("sausage", set.accept(interpreter))
+
+        val get = Expr.Get(
+            Expr.Literal(instance),
+            field
+        )
+
+        assertEquals("sausage", get.accept(interpreter))
+    }
+
+    @Test
+    fun rejectsGettingPropertyFromNonInstance() {
+        val expression = Expr.Get(
+            Expr.Literal("not an instance"),
+            Token(TokenType.IDENTIFIER, "field", null, 1)
+        )
+
+        assertRuntimeError(
+            "Only instances have properties.",
+            expression
+        )
+    }
+
+    @Test
+    fun rejectsSettingFieldOnNonInstance() {
+        val expression = Expr.Set(
+            Expr.Literal("not an instance"),
+            Token(TokenType.IDENTIFIER, "field", null, 1),
+            Expr.Literal(123.0)
+        )
+
+        assertRuntimeError(
+            "Only instances have fields.",
+            expression
+        )
+    }
+
+    @Test
+    fun methodCanAccessThis() {
+        val interpreter = Interpreter()
+
+        val className = Token(
+            TokenType.IDENTIFIER,
+            "Breakfast",
+            null,
+            1
+        )
+
+        val thisExpression = Expr.This(
+            Token(TokenType.THIS, "this", null, 1)
+        )
+
+        val method = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "getThis", null, 1),
+            emptyList(),
+            listOf(
+                Stmt.Return(
+                    Token(TokenType.RETURN, "return", null, 1),
+                    thisExpression
+                )
+            )
+        )
+
+        val klass = Stmt.Class(
+            className,
+            listOf(method)
+        )
+
+        val resolver = Resolver(interpreter)
+        resolver.resolve(listOf(klass))
+
+        interpreter.visitClassStmt(klass)
+
+        val instance = Expr.Call(
+            Expr.Variable(className),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            emptyList()
+        ).accept(interpreter)
+
+        val callMethod = Expr.Call(
+            Expr.Get(
+                Expr.Literal(instance),
+                Token(TokenType.IDENTIFIER, "getThis", null, 1)
+            ),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            emptyList()
+        )
+
+        assertEquals(
+            instance,
+            callMethod.accept(interpreter)
+        )
+    }
+
+    @Test
+    fun methodCanAccessInstanceFieldThroughThis() {
+        val interpreter = Interpreter()
+
+        val className = Token(
+            TokenType.IDENTIFIER,
+            "Breakfast",
+            null,
+            1
+        )
+
+        val thisExpression = Expr.This(
+            Token(TokenType.THIS, "this", null, 1)
+        )
+
+        val field = Token(
+            TokenType.IDENTIFIER,
+            "meat",
+            null,
+            1
+        )
+
+        val method = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "getMeat", null, 1),
+            emptyList(),
+            listOf(
+                Stmt.Return(
+                    Token(TokenType.RETURN, "return", null, 1),
+                    Expr.Get(thisExpression, field)
+                )
+            )
+        )
+
+        val klass = Stmt.Class(
+            className,
+            listOf(method)
+        )
+
+        val resolver = Resolver(interpreter)
+        resolver.resolve(listOf(klass))
+
+        interpreter.visitClassStmt(klass)
+
+        val instance = Expr.Call(
+            Expr.Variable(className),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            emptyList()
+        ).accept(interpreter)
+
+        kotlin.test.assertIs<LoxInstance>(instance)
+
+        instance.set(field, "bacon")
+
+        val callMethod = Expr.Call(
+            Expr.Get(
+                Expr.Literal(instance),
+                Token(TokenType.IDENTIFIER, "getMeat", null, 1)
+            ),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            emptyList()
+        )
+
+        assertEquals(
+            "bacon",
+            callMethod.accept(interpreter)
+        )
+    }
+
+    @Test
+    fun initializerSetsInstanceField() {
+        val interpreter = Interpreter()
+
+        val className = Token(
+            TokenType.IDENTIFIER,
+            "Breakfast",
+            null,
+            1
+        )
+
+        val parameter = Token(
+            TokenType.IDENTIFIER,
+            "meat",
+            null,
+            1
+        )
+
+        val thisExpression = Expr.This(
+            Token(TokenType.THIS, "this", null, 1)
+        )
+
+        val initializer = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "init", null, 1),
+            listOf(parameter),
+            listOf(
+                Stmt.Expression(
+                    Expr.Set(
+                        thisExpression,
+                        Token(TokenType.IDENTIFIER, "meat", null, 1),
+                        Expr.Variable(parameter)
+                    )
+                )
+            )
+        )
+
+        val klass = Stmt.Class(
+            className,
+            listOf(initializer)
+        )
+
+        val resolver = Resolver(interpreter)
+        resolver.resolve(listOf(klass))
+
+        interpreter.visitClassStmt(klass)
+
+        val instance = Expr.Call(
+            Expr.Variable(className),
+            Token(TokenType.RIGHT_PAREN, ")", null, 1),
+            listOf(Expr.Literal("bacon"))
+        ).accept(interpreter)
+
+        kotlin.test.assertIs<LoxInstance>(instance)
+
+        assertEquals(
+            "bacon",
+            instance.get(
+                Token(TokenType.IDENTIFIER, "meat", null, 1)
+            )
+        )
+    }
 }

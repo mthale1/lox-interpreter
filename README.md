@@ -6,28 +6,16 @@ A Lox interpreter implemented in Kotlin based on the interpreter developed in *C
 
 ## Current Implementation
 
-The interpreter currently includes the functionality implemented through Chapter 11.
+The interpreter currently includes the functionality implemented through Chapter 12.
 
-At this stage, the interpreter can:
-- Read Lox source code from a file or interactive prompt
-- Scan source code into tokens and parse it into syntax trees
-- Evaluate expressions and execute statements
-- Support variables, assignment, and block scope
-- Support arithmetic, comparison, equality, and logical operators
-- Execute conditional statements and loops
-- Declare and call functions
-- Pass arguments to functions and return values
-- Support local function scope and closures
-- Support recursive functions
-- Provide the native clock() function
-- Report scanning, syntax, resolution, and runtime errors
-- Resolve local variables using lexical scope
-- Support variable shadowing and resolved local assignment
-- Detect invalid local variable declarations and top-level return statements
+The interpreter supports scanning and parsing Lox source code, evaluating expressions, executing statements,
+variables and lexical scope, control flow, functions, closures, and recursion. It also supports object-oriented features
+including classes, instances, fields, methods, `this`, and initializers. A resolver handles lexical scope before 
+interpretation, and the interpreter reports scanning, syntax, resolution, and runtime errors.
 
-### Limitations
-The interpreter currently implements functionality through Chapter 11 of *Crafting Interpreters*. 
-Features introduced in later chapters have not yet been implemented.
+### Limitations 
+Features introduced after Chapter 12 of *Crafting Interpreters* have not yet been implemented.
+
 ---
 
 ## Requirements 
@@ -36,7 +24,8 @@ Features introduced in later chapters have not yet been implemented.
 This project includes the Gradle Wrapper, so Gradle does not need to be installed separately.
 
 ## Build
-Make sure you are in the `lox-interpreter` directory before running the build commands. 
+Make sure you are in the `lox-interpreter` directory before running the build commands.  
+
 If needed, navigate to the project directory:
 ```bash
 cd lox-interpreter
@@ -68,25 +57,20 @@ To rerun all automated tests and save the results:
 ```
 
 The automated tests are organized into the following files:
-- `ScannerTest.kt` - Tests scanning, tokenization, literals, keywords, comments, line tracking, and scanner errors.
-- `LoxTest.kt` - Tests parsed expressions and Lox syntax and runtime error reporting.
-- `ExprTest.kt` - Tests the generated AST expression classes, including stored values, operators, 
-expressions, and Visitor routing.
-- `StmtTest.kt` - Tests AST statement classes, stored values, and Visitor routing.
-- `AstPrinterTest.kt` - Tests the parenthesized string representation of AST expressions.
-- `EnvironmentTest.kt` - Tests variable storage, lookup, assignment, nested environments, and resolved variable 
-access by scope distance.
-- `FunctionTest.kt` - Tests callable behavior, user-defined functions, return values, function arity, and closures.
-- `GenerateAstTest.kt` - Tests AST generation, including expression classes, fields, Visitor methods, 
-and `accept()` methods.
-- `ParserTest.kt` - Tests expression parsing, precedence, associativity, grouping, nesting, and parser errors.
-- `ResolverTest.kt` - Tests lexical scope resolution, variable declarations, shadowing, function parameters, 
-nested function scopes, and resolver errors.
-- `InterpreterTest.kt` - Tests expression evaluation, literals, grouping, unary and binary operators, truthiness, 
-equality, nested expressions, and runtime errors.
-- `LoxIntegrationTest.kt` - Tests the full Scanner -> Parser -> Resolver -> Interpreter pipeline, including file 
-execution, expression evaluation, lexical scope resolution, output formatting, command-line exit codes, syntax errors, 
-resolver errors, runtime errors, and interactive prompt behavior.
+- `ScannerTest.kt` - Tests scanning and tokenization.
+- `LoxTest.kt` - Tests Lox execution and error reporting.
+- `ExprTest.kt` - Tests AST expression classes and Visitor behavior.
+- `StmtTest.kt` - Tests AST statement classes and Visitor behavior.
+- `AstPrinterTest.kt` - Tests AST expression printing.
+- `EnvironmentTest.kt` - Tests variable environments and scope access.
+- `FunctionTest.kt` - Tests user-defined function behavior.
+- `LoxClassTest.kt` - Tests Lox class behavior.
+- `LoxInstanceTest.kt` - Tests Lox instance behavior.
+- `GenerateAstTest.kt` - Tests AST code generation.
+- `ParserTest.kt` - Tests parsing expressions and statements.
+- `ResolverTest.kt` - Tests lexical scope resolution and resolution errors.
+- `InterpreterTest.kt` - Tests expression and statement interpretation.
+- `LoxIntegrationTest.kt` - Tests the complete interpreter pipeline and command-line behavior.
 
 ### Sample Input and Output
 `src/test/resources/input/test_input.lox` is a sample Lox program included with the project. 
@@ -143,7 +127,9 @@ lox-interpreter/
     │       │   ├── Interpreter.kt          # Evaluates expressions and executes statements
     │       │   ├── Lox.kt                  # Main entry point for the interpreter
     │       │   ├── LoxCallable.kt          # Defines callable Lox values
+    │       │   ├── LoxClass.kt             # Represents Lox classes and class methods
     │       │   ├── LoxFunction.kt          # Represents user-defined Lox functions
+    │       │   ├── LoxInstance.kt          # Represents class instances and instance fields
     │       │   ├── Parser.kt               # Parses tokens into expression and statement trees
     │       │   ├── Resolver.kt             # Resolves lexical scope for local variables
     │       │   ├── Return.kt               # Handles values returned from functions
@@ -162,6 +148,8 @@ lox-interpreter/
         │   │   ├── ExprTest.kt
         │   │   ├── FunctionTest.kt
         │   │   ├── InterpreterTest.kt
+        │   │   ├── LoxClassTest.kt
+        │   │   ├── LoxInstanceTest.kt
         │   │   ├── LoxIntegrationTest.kt
         │   │   ├── LoxTest.kt
         │   │   ├── ParserTest.kt
@@ -173,16 +161,20 @@ lox-interpreter/
         └── resources/                      # Test resources and output
             ├── input/                      # Lox source files used for testing
             │   ├── block_scope.lox
+            │   ├── classes.lox
             │   ├── duplicate_local.lox
             │   ├── for.lox
             │   ├── if_else.lox
+            │   ├── initializer_return_value.lox
             │   ├── invalid.lox
             │   ├── logical.lox
             │   ├── own_initializer.lox
             │   ├── resolver_closure.lox
             │   ├── runtime_error.lox
             │   ├── test_input.lox
+            │   ├── this_outside_class.lox
             │   ├── top_level_return.lox
+            │   ├── undefined_property.lox
             │   ├── undefined_variable.lox
             │   ├── variables.lox
             │   └── while.lox

@@ -79,3 +79,27 @@ var scope = "global";
     var scope = "block";
     showScope();
 }
+
+class Breakfast {
+    init(meat, bread) {
+        this.meat = meat;
+        this.bread = bread;
+    }
+
+    serve() {
+        return this.meat + " and " + this.bread;
+    }
+}
+
+var breakfast = Breakfast("bacon", "toast");
+
+print breakfast;
+print breakfast.meat;
+print breakfast.bread;
+print breakfast.serve();
+
+breakfast.meat = "sausage";
+print breakfast.meat;
+
+var serveBreakfast = breakfast.serve;
+print serveBreakfast();

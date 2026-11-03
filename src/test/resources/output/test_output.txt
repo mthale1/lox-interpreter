@@ -19,3 +19,9 @@ returned early
 8
 global
 global
+Breakfast instance
+bacon
+toast
+bacon and toast
+sausage
+sausage and toast
