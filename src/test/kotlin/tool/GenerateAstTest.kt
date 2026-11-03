@@ -67,6 +67,7 @@ class GenerateAstTest {
         assertTrue(content.contains("val name: Token"))
         assertTrue(content.contains("val obj: Expr"))
         assertTrue(content.contains("val keyword: Token"))
+        assertTrue(content.contains("val method: Token"))
     }
 
     @Test
@@ -85,6 +86,7 @@ class GenerateAstTest {
         assertTrue(content.contains("fun visitGetExpr(expr: Get): R"))
         assertTrue(content.contains("fun visitSetExpr(expr: Set): R"))
         assertTrue(content.contains("fun visitThisExpr(expr: This): R"))
+        assertTrue(content.contains("fun visitSuperExpr(expr: Super): R"))
     }
 
     @Test
@@ -103,6 +105,7 @@ class GenerateAstTest {
         assertTrue(content.contains("return visitor.visitGetExpr(this)"))
         assertTrue(content.contains("return visitor.visitSetExpr(this)"))
         assertTrue(content.contains("return visitor.visitThisExpr(this)"))
+        assertTrue(content.contains("return visitor.visitSuperExpr(this)"))
     }
 
     @Test
@@ -167,5 +170,6 @@ class GenerateAstTest {
         assertTrue(content.contains("val initializer: Expr?"))
         assertTrue(content.contains("val body: Stmt"))
         assertTrue(content.contains("val methods: List<Stmt.Function>"))
+        assertTrue(content.contains("val superclass: Expr.Variable?"))
     }
 }

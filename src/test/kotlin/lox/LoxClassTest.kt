@@ -270,4 +270,35 @@ class LoxClassTest {
             subclass.findMethod("serve")
         )
     }
+
+    @Test
+    fun inheritedInitializerDeterminesSubclassArity() {
+        val declaration = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "init", null, 1),
+            listOf(
+                Token(TokenType.IDENTIFIER, "value", null, 1)
+            ),
+            emptyList()
+        )
+
+        val initializer = LoxFunction(
+            declaration,
+            Environment(),
+            true
+        )
+
+        val superclass = LoxClass(
+            "Parent",
+            null,
+            mapOf("init" to initializer)
+        )
+
+        val subclass = LoxClass(
+            "Child",
+            superclass,
+            emptyMap()
+        )
+
+        assertEquals(1, subclass.arity())
+    }
 }

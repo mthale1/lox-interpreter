@@ -299,4 +299,17 @@ class LoxTest {
         )
     }
 
+    @Test
+    fun runsSuperExpressions() {
+        assertEquals(
+            "(super.method)",
+            runExpression("super.method")
+        )
+
+        assertEquals(
+            "(call (super.method))",
+            runExpression("super.method()")
+        )
+    }
+
 }

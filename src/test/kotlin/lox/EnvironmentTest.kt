@@ -155,4 +155,40 @@ class EnvironmentTest {
         )
     }
 
+    @Test
+    fun getsVariableAtMultipleResolvedDistances() {
+        val global = Environment()
+        global.define("a", 123.0)
+
+        val middle = Environment(global)
+        val local = Environment(middle)
+
+        assertEquals(
+            123.0,
+            local.getAt(2, "a")
+        )
+    }
+
+    @Test
+    fun assignsVariableAtMultipleResolvedDistances() {
+        val global = Environment()
+        global.define("a", 123.0)
+
+        val middle = Environment(global)
+        val local = Environment(middle)
+
+        val name = Token(
+            TokenType.IDENTIFIER,
+            "a",
+            null,
+            1
+        )
+
+        local.assignAt(2, name, 456.0)
+
+        assertEquals(
+            456.0,
+            global.get(name)
+        )
+    }
 }

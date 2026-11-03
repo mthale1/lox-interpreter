@@ -1014,7 +1014,7 @@ class InterpreterTest {
     }
 
     @Test
-    fun binaryOperatorsRejectNonNumberOperands() {
+    fun subtractionRejectsNonNumberOperands() {
         assertRuntimeError(
             "Operands must be numbers.",
             Expr.Binary(
@@ -1024,6 +1024,18 @@ class InterpreterTest {
             )
         )
 
+        assertRuntimeError(
+            "Operands must be numbers.",
+            Expr.Binary(
+                Expr.Literal(5.0),
+                Token(TokenType.MINUS, "-", null, 1),
+                Expr.Literal("hello")
+            )
+        )
+    }
+
+    @Test
+    fun multiplicationRejectsNonNumberOperands() {
         assertRuntimeError(
             "Operands must be numbers.",
             Expr.Binary(
@@ -1032,7 +1044,10 @@ class InterpreterTest {
                 Expr.Literal("hello")
             )
         )
+    }
 
+    @Test
+    fun divisionRejectsNonNumberOperands() {
         assertRuntimeError(
             "Operands must be numbers.",
             Expr.Binary(
@@ -1041,22 +1056,16 @@ class InterpreterTest {
                 Expr.Literal(5.0)
             )
         )
+    }
 
+    @Test
+    fun comparisonRejectsNonNumberOperands() {
         assertRuntimeError(
             "Operands must be numbers.",
             Expr.Binary(
                 Expr.Literal("hello"),
                 Token(TokenType.GREATER, ">", null, 1),
                 Expr.Literal(5.0)
-            )
-        )
-
-        assertRuntimeError(
-            "Operands must be numbers.",
-            Expr.Binary(
-                Expr.Literal(5.0),
-                Token(TokenType.MINUS, "-", null, 1),
-                Expr.Literal("hello")
             )
         )
     }
@@ -1559,5 +1568,129 @@ class InterpreterTest {
         assertTrue(
             error.contains("Undefined property 'serve'.")
         )
+    }
+
+    @Test
+    fun superMethodCanAccessThis() {
+        val output = interpret(
+            """
+        class Parent {
+            show() {
+                print this.value;
+            }
+        }
+
+        class Child < Parent {
+            showParent() {
+                super.show();
+            }
+        }
+
+        var child = Child();
+        child.value = "from child";
+        child.showParent();
+        """.trimIndent()
+        )
+
+        assertEquals("from child", output)
+    }
+
+    @Test
+    fun inheritedMethodCanAccessThis() {
+        val output = interpret(
+            """
+        class Parent {
+            getValue() {
+                print this.value;
+            }
+        }
+
+        class Child < Parent {}
+
+        var child = Child();
+        child.value = "child value";
+        child.getValue();
+        """.trimIndent()
+        )
+
+        assertEquals("child value", output)
+    }
+
+    @Test
+    fun subclassCanOverrideInheritedInitializer() {
+        val output = interpret(
+            """
+        class Parent {
+            init(value) {
+                this.value = value;
+            }
+        }
+
+        class Child < Parent {
+            init() {
+                this.value = "child";
+            }
+        }
+
+        var child = Child();
+        print child.value;
+        """.trimIndent()
+        )
+
+        assertEquals("child", output)
+    }
+
+    @Test
+    fun inheritedMethodUsesOverriddenSubclassMethod() {
+        val output = interpret(
+            """
+        class Parent {
+            method() {
+                print "parent";
+            }
+
+            test() {
+                this.method();
+            }
+        }
+
+        class Child < Parent {
+            method() {
+                print "child";
+            }
+        }
+
+        Child().test();
+        """.trimIndent()
+        )
+
+        assertEquals("child", output)
+    }
+
+    @Test
+    fun superBypassesSubclassOverride() {
+        val output = interpret(
+            """
+        class Parent {
+            method() {
+                print "parent";
+            }
+        }
+
+        class Child < Parent {
+            method() {
+                print "child";
+            }
+
+            test() {
+                super.method();
+            }
+        }
+
+        Child().test();
+        """.trimIndent()
+        )
+
+        assertEquals("parent", output)
     }
 }

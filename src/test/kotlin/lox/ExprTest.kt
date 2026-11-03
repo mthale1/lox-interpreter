@@ -41,22 +41,28 @@ class ExprTest {
     }
 
     @Test
-    fun literalStoresValues() {
-        val expressions = listOf(
-            Expr.Literal(123).value,
-            Expr.Literal(0.75).value,
-            Expr.Literal("string").value,
-            Expr.Literal(true).value,
-            Expr.Literal(false).value,
-            Expr.Literal(null).value
-        )
+    fun literalStoresNumberValues() {
+        assertEquals(123, Expr.Literal(123).value)
+        assertEquals(0.75, Expr.Literal(0.75).value)
+    }
 
-        assertEquals(123, expressions[0])
-        assertEquals(0.75, expressions[1])
-        assertEquals("string", expressions[2])
-        assertEquals(true, expressions[3])
-        assertEquals(false, expressions[4])
-        assertEquals(null, expressions[5])
+    @Test
+    fun literalStoresStringValue() {
+        assertEquals(
+            "string",
+            Expr.Literal("string").value
+        )
+    }
+
+    @Test
+    fun literalStoresBooleanValues() {
+        assertEquals(true, Expr.Literal(true).value)
+        assertEquals(false, Expr.Literal(false).value)
+    }
+
+    @Test
+    fun literalStoresNilValue() {
+        assertEquals(null, Expr.Literal(null).value)
     }
 
     @Test

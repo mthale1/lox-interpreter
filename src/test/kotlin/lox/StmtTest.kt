@@ -297,6 +297,7 @@ class StmtTest {
         val statement = Stmt.Class(name,null, methods)
 
         assertEquals(name, statement.name)
+        assertEquals(null, statement.superclass)
         assertEquals(methods, statement.methods)
     }
 

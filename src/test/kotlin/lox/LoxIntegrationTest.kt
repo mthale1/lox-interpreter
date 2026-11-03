@@ -732,4 +732,35 @@ class LoxIntegrationTest {
             )
         )
     }
+
+    @Test
+    fun subclassInheritsSuperclassInitializer() {
+        val process = ProcessBuilder(
+            "java",
+            "-cp",
+            System.getProperty("java.class.path"),
+            "lox.Lox"
+        ).start()
+
+        process.outputStream.bufferedWriter().use { writer ->
+            writer.write(
+                "class Parent { init(value) { this.value = value; } }\n"
+            )
+            writer.write(
+                "class Child < Parent {}\n"
+            )
+            writer.write(
+                "var child = Child(\"inherited\");\n"
+            )
+            writer.write(
+                "print child.value;\n"
+            )
+        }
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+
+        assertEquals(0, exitCode)
+        assertTrue(output.contains("inherited"))
+    }
 }

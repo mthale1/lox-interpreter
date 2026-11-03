@@ -237,4 +237,56 @@ class LoxInstanceTest {
             instance.get(name)
         )
     }
+
+    @Test
+    fun inheritedMethodIsBoundToSubclassInstance() {
+        val thisExpression = Expr.This(
+            Token(TokenType.THIS, "this", null, 1)
+        )
+
+        val declaration = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "getThis", null, 1),
+            emptyList(),
+            listOf(
+                Stmt.Return(
+                    Token(TokenType.RETURN, "return", null, 1),
+                    thisExpression
+                )
+            )
+        )
+
+        val interpreter = Interpreter()
+        interpreter.resolve(thisExpression, 1)
+
+        val method = LoxFunction(
+            declaration,
+            Environment(),
+            false
+        )
+
+        val superclass = LoxClass(
+            "Parent",
+            null,
+            mapOf("getThis" to method)
+        )
+
+        val subclass = LoxClass(
+            "Child",
+            superclass,
+            emptyMap()
+        )
+
+        val instance = LoxInstance(subclass)
+
+        val boundMethod = instance.get(
+            Token(TokenType.IDENTIFIER, "getThis", null, 1)
+        )
+
+        assertIs<LoxFunction>(boundMethod)
+
+        assertEquals(
+            instance,
+            boundMethod.call(interpreter, emptyList())
+        )
+    }
 }

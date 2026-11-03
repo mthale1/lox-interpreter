@@ -358,4 +358,27 @@ class ResolverTest {
             )
         )
     }
+
+    @Test
+    fun resolvesSuperInsideNestedFunctionInSubclass() {
+        val error = resolve(
+            """
+        class Parent {
+            method() {}
+        }
+
+        class Child < Parent {
+            method() {
+                fun callSuper() {
+                    super.method();
+                }
+
+                callSuper();
+            }
+        }
+        """.trimIndent()
+        )
+
+        assertTrue(error.isEmpty())
+    }
 }

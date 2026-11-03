@@ -33,8 +33,8 @@ class ScannerTest {
     }
 
     @Test
-    fun scansTokens() {
-        val scanner = Scanner("(){},.-+;/* ! != = == < <= > >=")
+    fun scansSingleCharacterTokens() {
+        val scanner = Scanner("(){},.-+;/*")
         val tokens = scanner.scanTokens()
 
         assertEquals(TokenType.LEFT_PAREN, tokens[0].type)
@@ -48,18 +48,23 @@ class ScannerTest {
         assertEquals(TokenType.SEMICOLON, tokens[8].type)
         assertEquals(TokenType.SLASH, tokens[9].type)
         assertEquals(TokenType.STAR, tokens[10].type)
+        assertEquals(TokenType.EOF, tokens[11].type)
+    }
 
+    @Test
+    fun scansOneOrTwoCharacterOperators() {
+        val scanner = Scanner("! != = == < <= > >=")
+        val tokens = scanner.scanTokens()
 
-        assertEquals(TokenType.BANG, tokens[11].type)
-        assertEquals(TokenType.BANG_EQUAL, tokens[12].type)
-        assertEquals(TokenType.EQUAL, tokens[13].type)
-        assertEquals(TokenType.EQUAL_EQUAL, tokens[14].type)
-        assertEquals(TokenType.LESS, tokens[15].type)
-        assertEquals(TokenType.LESS_EQUAL, tokens[16].type)
-        assertEquals(TokenType.GREATER, tokens[17].type)
-        assertEquals(TokenType.GREATER_EQUAL, tokens[18].type)
-
-        assertEquals(TokenType.EOF, tokens[19].type)
+        assertEquals(TokenType.BANG, tokens[0].type)
+        assertEquals(TokenType.BANG_EQUAL, tokens[1].type)
+        assertEquals(TokenType.EQUAL, tokens[2].type)
+        assertEquals(TokenType.EQUAL_EQUAL, tokens[3].type)
+        assertEquals(TokenType.LESS, tokens[4].type)
+        assertEquals(TokenType.LESS_EQUAL, tokens[5].type)
+        assertEquals(TokenType.GREATER, tokens[6].type)
+        assertEquals(TokenType.GREATER_EQUAL, tokens[7].type)
+        assertEquals(TokenType.EOF, tokens[8].type)
     }
 
 

@@ -119,3 +119,20 @@ class Child < Parent {
 var child = Child();
 
 print child.method();
+
+class Base {
+    init(value) {
+        this.value = value;
+    }
+
+    inheritedMethod() {
+        return "inherited";
+    }
+}
+
+class Derived < Base {}
+
+var derived = Derived("inherited value");
+
+print derived.value;
+print derived.inheritedMethod();

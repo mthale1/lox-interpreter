@@ -4,14 +4,11 @@ A Lox interpreter implemented in Kotlin based on the interpreter developed in *C
 **Name:** Makenzie Hale  
 **Programming Language:** Kotlin  
 
-## Current Implementation
-The interpreter currently includes the functionality implemented through Chapter 13.
-
-The interpreter supports scanning and parsing Lox source code, evaluating expressions, executing statements,
-variables and lexical scope, control flow, functions, closures, and recursion. It also supports object-oriented features
-including classes, instances, fields, methods, `this`, initializers, inheritance, and superclass method access using `super`.
-A resolver handles lexical scope before interpretation, and the interpreter reports scanning, syntax, resolution, and
-runtime errors.
+## Project Summary
+This project implements an interpreter for the Lox programming language in Kotlin, based on Crafting Interpreters. 
+The interpreter can read and execute Lox programs with variables, expressions, control flow, functions, closures, 
+classes, methods, and inheritance. It also handles lexical scope and reports syntax, resolution, and runtime errors. 
+The project includes the functionality implemented through Chapter 13.
 
 ### Limitations 
 No known deficiencies.
@@ -57,7 +54,7 @@ To rerun all automated tests and save the results:
 
 The automated tests are organized into the following files:
 - `ScannerTest.kt` - Tests scanning and tokenization.
-- `LoxTest.kt` - Tests Lox execution and error reporting.
+- `LoxTest.kt` - Tests scanning/parsing integration, AST output, and error reporting.
 - `ExprTest.kt` - Tests AST expression classes and Visitor behavior.
 - `StmtTest.kt` - Tests AST statement classes and Visitor behavior.
 - `AstPrinterTest.kt` - Tests AST expression printing.
@@ -72,8 +69,8 @@ The automated tests are organized into the following files:
 - `LoxIntegrationTest.kt` - Tests the complete interpreter pipeline and command-line behavior.
 
 ### Sample Input and Output
-`src/test/resources/input/test_input.lox` is a sample Lox program included with the project. 
-It contains Lox statements that exercise the implemented interpreter features.
+`src/test/resources/input/test_input.lox` is a sample Lox program included with the project.
+It contains Lox statements that exercise the implemented interpreter features through Chapter 13.
 
 To run this file through the interpreter and save the interpreter's output to `test_output.txt`, 
 first build the executable:

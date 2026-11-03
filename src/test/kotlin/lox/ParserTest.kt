@@ -1,9 +1,12 @@
 package lox
 
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 class ParserTest {
 
@@ -144,6 +147,21 @@ class ParserTest {
                 assertEquals("this", actual.keyword.lexeme)
             }
         }
+    }
+
+    private fun captureErrorOutput(block: () -> Unit): String {
+        val originalErr = System.err
+        val errorOutput = ByteArrayOutputStream()
+
+        System.setErr(PrintStream(errorOutput))
+
+        try {
+            block()
+        } finally {
+            System.setErr(originalErr)
+        }
+
+        return errorOutput.toString()
     }
 
     private fun parse(source: String): Expr? {
@@ -890,8 +908,8 @@ class ParserTest {
     }
 
     @Test
-    fun parsesOperatorPrecedence() {
-        val multiplication = ExpectedExpr.Binary(
+    fun multiplicationHasHigherPrecedenceThanAddition() {
+        val expected = ExpectedExpr.Binary(
             ExpectedExpr.Literal(1.0),
             TokenType.PLUS,
             ExpectedExpr.Binary(
@@ -901,7 +919,15 @@ class ParserTest {
             )
         )
 
-        val addition = ExpectedExpr.Binary(
+        assertExpression(
+            parse("1 + 2 * 3"),
+            expected
+        )
+    }
+
+    @Test
+    fun additionHasHigherPrecedenceThanComparison() {
+        val expected = ExpectedExpr.Binary(
             ExpectedExpr.Binary(
                 ExpectedExpr.Literal(1.0),
                 TokenType.PLUS,
@@ -911,7 +937,15 @@ class ParserTest {
             ExpectedExpr.Literal(3.0)
         )
 
-        val comparison = ExpectedExpr.Binary(
+        assertExpression(
+            parse("1 + 2 > 3"),
+            expected
+        )
+    }
+
+    @Test
+    fun comparisonHasHigherPrecedenceThanEquality() {
+        val expected = ExpectedExpr.Binary(
             ExpectedExpr.Binary(
                 ExpectedExpr.Literal(1.0),
                 TokenType.LESS,
@@ -921,14 +955,15 @@ class ParserTest {
             ExpectedExpr.Literal(true)
         )
 
-        assertExpression(parse("1 + 2 * 3"), multiplication)
-        assertExpression(parse("1 + 2 > 3"), addition)
-        assertExpression(parse("1 < 2 == true"), comparison)
+        assertExpression(
+            parse("1 < 2 == true"),
+            expected
+        )
     }
 
     @Test
-    fun parsesOperatorsLeftToRight() {
-        val subtraction = ExpectedExpr.Binary(
+    fun subtractionParsesLeftToRight() {
+        val expected = ExpectedExpr.Binary(
             ExpectedExpr.Binary(
                 ExpectedExpr.Literal(10.0),
                 TokenType.MINUS,
@@ -938,7 +973,15 @@ class ParserTest {
             ExpectedExpr.Literal(2.0)
         )
 
-        val division = ExpectedExpr.Binary(
+        assertExpression(
+            parse("10 - 3 - 2"),
+            expected
+        )
+    }
+
+    @Test
+    fun divisionParsesLeftToRight() {
+        val expected = ExpectedExpr.Binary(
             ExpectedExpr.Binary(
                 ExpectedExpr.Literal(12.0),
                 TokenType.SLASH,
@@ -948,7 +991,15 @@ class ParserTest {
             ExpectedExpr.Literal(2.0)
         )
 
-        val comparison = ExpectedExpr.Binary(
+        assertExpression(
+            parse("12 / 3 / 2"),
+            expected
+        )
+    }
+
+    @Test
+    fun comparisonParsesLeftToRight() {
+        val expected = ExpectedExpr.Binary(
             ExpectedExpr.Binary(
                 ExpectedExpr.Literal(1.0),
                 TokenType.LESS,
@@ -958,7 +1009,15 @@ class ParserTest {
             ExpectedExpr.Literal(3.0)
         )
 
-        val equality = ExpectedExpr.Binary(
+        assertExpression(
+            parse("1 < 2 < 3"),
+            expected
+        )
+    }
+
+    @Test
+    fun equalityParsesLeftToRight() {
+        val expected = ExpectedExpr.Binary(
             ExpectedExpr.Binary(
                 ExpectedExpr.Literal(1.0),
                 TokenType.EQUAL_EQUAL,
@@ -968,10 +1027,10 @@ class ParserTest {
             ExpectedExpr.Literal(3.0)
         )
 
-        assertExpression(parse("10 - 3 - 2"), subtraction)
-        assertExpression(parse("12 / 3 / 2"), division)
-        assertExpression(parse("1 < 2 < 3"), comparison)
-        assertExpression(parse("1 == 2 == 3"), equality)
+        assertExpression(
+            parse("1 == 2 == 3"),
+            expected
+        )
     }
 
     @Test
@@ -1457,9 +1516,20 @@ class ParserTest {
 
     @Test
     fun rejectsInvalidAssignmentTarget() {
-        val expression = parse("(a + b) = 123")
+        var expression: Expr? = null
+
+        val errorOutput = captureErrorOutput {
+            expression = parse("(a + b) = 123")
+        }
 
         assertIs<Expr.Grouping>(expression)
+
+        assertEquals(
+            true,
+            errorOutput.contains(
+                "Invalid assignment target."
+            )
+        )
     }
 
     @Test
@@ -1518,6 +1588,50 @@ class ParserTest {
     }
 
     @Test
+    fun rejectsSuperWithoutDot() {
+        val errorOutput = captureErrorOutput {
+            parse("super method")
+        }
+
+        assertEquals(
+            true,
+            errorOutput.contains(
+                "Expect '.' after 'super'."
+            )
+        )
+    }
+
+    @Test
+    fun rejectsSuperWithoutMethodName() {
+        val errorOutput = captureErrorOutput {
+            parse("super.")
+        }
+
+        assertEquals(
+            true,
+            errorOutput.contains(
+                "Expect superclass method name."
+            )
+        )
+    }
+
+    @Test
+    fun rejectsMissingSuperclassName() {
+        val errorOutput = captureErrorOutput {
+            parseStatements(
+                "class Child < {}"
+            )
+        }
+
+        assertEquals(
+            true,
+            errorOutput.contains(
+                "Expect superclass name."
+            )
+        )
+    }
+
+    @Test
     fun continuesParsingAfterInvalidDeclaration() {
         val statements = parseStatements("var = 123; print 456;")
 
@@ -1529,6 +1643,110 @@ class ParserTest {
         assertExpression(
             statement.expression,
             ExpectedExpr.Literal(456.0)
+        )
+    }
+
+    @Test
+    fun parsesChainedCallAndPropertyAccess() {
+        val expected = ExpectedExpr.Call(
+            ExpectedExpr.Get(
+                ExpectedExpr.Call(
+                    ExpectedExpr.Variable("getObject"),
+                    emptyList()
+                ),
+                "method"
+            ),
+            emptyList()
+        )
+
+        assertExpression(
+            parse("getObject().method()"),
+            expected
+        )
+    }
+
+    @Test
+    fun parsesChainedPropertySet() {
+        val expected = ExpectedExpr.Set(
+            ExpectedExpr.Get(
+                ExpectedExpr.Variable("object"),
+                "child"
+            ),
+            "value",
+            ExpectedExpr.Literal(123.0)
+        )
+
+        assertExpression(
+            parse("object.child.value = 123"),
+            expected
+        )
+    }
+
+    @Test
+    fun parsesThisMethodCall() {
+        val expected = ExpectedExpr.Call(
+            ExpectedExpr.Get(
+                ExpectedExpr.This,
+                "method"
+            ),
+            emptyList()
+        )
+
+        assertExpression(
+            parse("this.method()"),
+            expected
+        )
+    }
+
+    @Test
+    fun parsesSuperMethodCallWithArguments() {
+        val expected = ExpectedExpr.Call(
+            ExpectedExpr.Super("method"),
+            listOf(
+                ExpectedExpr.Literal(1.0),
+                ExpectedExpr.Literal(2.0)
+            )
+        )
+
+        assertExpression(
+            parse("super.method(1, 2)"),
+            expected
+        )
+    }
+
+    @Test
+    fun rejectsMoreThan255Parameters() {
+        val parameters = (1..256).joinToString(", ") { "p$it" }
+
+        val errorOutput = captureErrorOutput {
+            parseStatements(
+                "fun test($parameters) {}"
+            )
+        }
+
+        assertEquals(
+            true,
+            errorOutput.contains(
+                "Can't have more than 255 parameters."
+            )
+        )
+    }
+
+    @Test
+    fun rejectsMoreThan255Arguments() {
+        val arguments = (1..256).joinToString(", ") { "$it" }
+
+        val errorOutput = captureErrorOutput {
+            parse(
+                "test($arguments)"
+            )
+        }
+
+        assertEquals(
+            true,
+            errorOutput.contains(
+                "Can't have more than 255 arguments."
+            )
         )
     }
 

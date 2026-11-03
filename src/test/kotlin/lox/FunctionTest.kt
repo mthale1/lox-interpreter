@@ -290,4 +290,48 @@ class FunctionTest {
             bound.call(Interpreter(), emptyList())
         )
     }
+
+    @Test
+    fun bindPreservesExistingClosure() {
+        val closure = Environment()
+        closure.define("value", 123.0)
+
+        val valueToken = Token(
+            TokenType.IDENTIFIER,
+            "value",
+            null,
+            1
+        )
+        val valueExpression = Expr.Variable(valueToken)
+
+        val declaration = Stmt.Function(
+            Token(TokenType.IDENTIFIER, "getValue", null, 1),
+            emptyList(),
+            listOf(
+                Stmt.Return(
+                    Token(TokenType.RETURN, "return", null, 1),
+                    valueExpression
+                )
+            )
+        )
+
+        val interpreter = Interpreter()
+        interpreter.resolve(valueExpression, 2)
+
+        val function = LoxFunction(
+            declaration,
+            closure,
+            false
+        )
+
+        val klass = LoxClass("Test", null, emptyMap())
+        val instance = LoxInstance(klass)
+
+        val bound = function.bind(instance)
+
+        assertEquals(
+            123.0,
+            bound.call(interpreter, emptyList())
+        )
+    }
 }

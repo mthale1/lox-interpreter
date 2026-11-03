@@ -9,6 +9,7 @@ Reusing configuration cache.
 > Task :compileTestKotlin
 > Task :compileTestJava NO-SOURCE
 > Task :testClasses
+
 > Task :test
 
 AstPrinterTest > printsUnaryExpressions() PASSED
@@ -61,11 +62,19 @@ EnvironmentTest > assignsVariable() PASSED
 
 EnvironmentTest > assignsVariableInOuterEnvironment() PASSED
 
+EnvironmentTest > assignsVariableAtMultipleResolvedDistances() PASSED
+
+EnvironmentTest > getsVariableAtMultipleResolvedDistances() PASSED
+
 EnvironmentTest > definesAndGetsNilVariable() PASSED
 
 EnvironmentTest > assignsInnerVariableInsteadOfOuterVariable() PASSED
 
 ExprTest > assignStoresNamesAndValues() PASSED
+
+ExprTest > literalStoresBooleanValues() PASSED
+
+ExprTest > literalStoresNumberValues() PASSED
 
 ExprTest > callStoresCalleeParenAndArguments() PASSED
 
@@ -93,6 +102,8 @@ ExprTest > variableStoresNames() PASSED
 
 ExprTest > logicalStoresExpressionsAndOperator() PASSED
 
+ExprTest > literalStoresStringValue() PASSED
+
 ExprTest > callAcceptsVisitor() PASSED
 
 ExprTest > logicalAcceptsVisitor() PASSED
@@ -105,7 +116,7 @@ ExprTest > setStoresObjectNameAndValue() PASSED
 
 ExprTest > getStoresObjectAndName() PASSED
 
-ExprTest > literalStoresValues() PASSED
+ExprTest > literalStoresNilValue() PASSED
 
 ExprTest > assignAcceptsVisitor() PASSED
 
@@ -114,6 +125,8 @@ ExprTest > unaryAcceptsVisitor() PASSED
 ExprTest > setAcceptsVisitor() PASSED
 
 ExprTest > binaryAcceptsVisitor() PASSED
+
+FunctionTest > bindPreservesExistingClosure() PASSED
 
 FunctionTest > storesReturnValue() PASSED
 
@@ -141,6 +154,8 @@ FunctionTest > bindMakesThisAvailableToMethod() PASSED
 
 InterpreterTest > ifExecutesElseBranchWhenConditionIsFalse() PASSED
 
+InterpreterTest > inheritedMethodUsesOverriddenSubclassMethod() PASSED
+
 InterpreterTest > evaluatesGreaterThanOrEqual() PASSED
 
 InterpreterTest > evaluatesDivision() PASSED
@@ -156,6 +171,8 @@ InterpreterTest > functionReceivesArguments() PASSED
 InterpreterTest > evaluatesGrouping() PASSED
 
 InterpreterTest > evaluatesEquality() PASSED
+
+InterpreterTest > inheritedMethodCanAccessThis() PASSED
 
 InterpreterTest > concatenatesStrings() PASSED
 
@@ -191,6 +208,8 @@ InterpreterTest > whileDoesNotExecuteWhenConditionIsFalse() PASSED
 
 InterpreterTest > evaluatesNestedExpressions() PASSED
 
+InterpreterTest > subtractionRejectsNonNumberOperands() PASSED
+
 InterpreterTest > evaluatesUninitializedVariables() PASSED
 
 InterpreterTest > evaluatesAssignmentExpressions() PASSED
@@ -205,6 +224,8 @@ InterpreterTest > evaluatesLessThan() PASSED
 
 InterpreterTest > methodCanAccessThis() PASSED
 
+InterpreterTest > subclassCanOverrideInheritedInitializer() PASSED
+
 InterpreterTest > throwsRuntimeErrorWhenAssigningUndefinedVariable() PASSED
 
 InterpreterTest > evaluatesMultiplication() PASSED
@@ -217,13 +238,15 @@ InterpreterTest > unaryMinusRejectsNonNumberOperand() PASSED
 
 InterpreterTest > evaluatesVariables() PASSED
 
+InterpreterTest > superBypassesSubclassOverride() PASSED
+
 InterpreterTest > evaluatesAddition() PASSED
+
+InterpreterTest > comparisonRejectsNonNumberOperands() PASSED
 
 InterpreterTest > functionCapturesClosure() PASSED
 
 InterpreterTest > ifExecutesThenBranchWhenConditionIsTrue() PASSED
-
-InterpreterTest > binaryOperatorsRejectNonNumberOperands() PASSED
 
 InterpreterTest > evaluatesLessThanOrEqual() PASSED
 
@@ -237,6 +260,8 @@ InterpreterTest > subclassInheritsInitializer() PASSED
 
 InterpreterTest > methodCanAccessInstanceFieldThroughThis() PASSED
 
+InterpreterTest > superMethodCanAccessThis() PASSED
+
 InterpreterTest > callingClassCreatesInstance() PASSED
 
 InterpreterTest > assignmentsUpdateVariables() PASSED
@@ -247,17 +272,23 @@ InterpreterTest > ifDoesNothingWhenConditionIsFalseWithoutElse() PASSED
 
 InterpreterTest > callsNativeClockFunction() PASSED
 
+InterpreterTest > divisionRejectsNonNumberOperands() PASSED
+
 InterpreterTest > throwsRuntimeErrorForUndefinedVariable() PASSED
 
 InterpreterTest > setsAndGetsInstanceField() PASSED
 
 InterpreterTest > subclassOverridesSuperclassMethod() PASSED
 
+InterpreterTest > multiplicationRejectsNonNumberOperands() PASSED
+
 LoxClassTest > findMethodReturnsNullWhenMethodDoesNotExist() PASSED
 
 LoxClassTest > findMethodReturnsMethod() PASSED
 
 LoxClassTest > initializerDeterminesClassArity() PASSED
+
+LoxClassTest > inheritedInitializerDeterminesSubclassArity() PASSED
 
 LoxClassTest > findMethodReturnsInheritedMethod() PASSED
 
@@ -278,6 +309,8 @@ LoxInstanceTest > fieldCanBeUpdated() PASSED
 LoxInstanceTest > methodIsBoundToInstance() PASSED
 
 LoxInstanceTest > getsMethodFromClass() PASSED
+
+LoxInstanceTest > inheritedMethodIsBoundToSubclassInstance() PASSED
 
 LoxInstanceTest > fieldCanStoreNil() PASSED
 
@@ -351,6 +384,8 @@ LoxIntegrationTest > exitsWithErrorForUndefinedSuperMethod() PASSED
 
 LoxIntegrationTest > functionWithoutReturnProducesNil() PASSED
 
+LoxIntegrationTest > subclassInheritsSuperclassInitializer() PASSED
+
 LoxIntegrationTest > exitsWithErrorForUndefinedProperty() PASSED
 
 LoxIntegrationTest > runsInteractivePrompt() PASSED
@@ -366,6 +401,8 @@ LoxTest > runsPropertyExpressions() PASSED
 LoxTest > reportsLineError() PASSED
 
 LoxTest > runsCallExpressions() PASSED
+
+LoxTest > runsSuperExpressions() PASSED
 
 LoxTest > runsBinaryExpressions() PASSED
 
@@ -407,6 +444,8 @@ ParserTest > rejectsMissingSemicolon() PASSED
 
 ParserTest > parsesEmptyBlock() PASSED
 
+ParserTest > parsesSuperMethodCallWithArguments() PASSED
+
 ParserTest > parsesNestedUnaryExpressions() PASSED
 
 ParserTest > parsesForStatementWithoutIncrement() PASSED
@@ -423,7 +462,7 @@ ParserTest > rejectsMissingClosingBrace() PASSED
 
 ParserTest > parsesIfElseStatement() PASSED
 
-ParserTest > parsesOperatorsLeftToRight() PASSED
+ParserTest > parsesThisMethodCall() PASSED
 
 ParserTest > parsesBlockWithMultipleStatements() PASSED
 
@@ -459,6 +498,8 @@ ParserTest > parsesVariableDeclaration() PASSED
 
 ParserTest > parsesLogicalAndExpression() PASSED
 
+ParserTest > comparisonParsesLeftToRight() PASSED
+
 ParserTest > parsesFunctionCallWithoutArguments() PASSED
 
 ParserTest > rejectsMissingClosingParenthesisAfterForClause() PASSED
@@ -467,15 +508,27 @@ ParserTest > parsesMultipleStatements() PASSED
 
 ParserTest > parsesClassDeclaration() PASSED
 
+ParserTest > rejectsSuperWithoutMethodName() PASSED
+
 ParserTest > parsesPrintStatement() PASSED
 
+ParserTest > additionHasHigherPrecedenceThanComparison() PASSED
+
+ParserTest > rejectsSuperWithoutDot() PASSED
+
 ParserTest > parsesEqualityExpressions() PASSED
+
+ParserTest > rejectsMissingSuperclassName() PASSED
 
 ParserTest > parsesForStatement() PASSED
 
 ParserTest > parsesThisPropertyAccess() PASSED
 
+ParserTest > parsesChainedCallAndPropertyAccess() PASSED
+
 ParserTest > parsesChainedPropertyGet() PASSED
+
+ParserTest > parsesChainedPropertySet() PASSED
 
 ParserTest > parsesLogicalOperatorPrecedence() PASSED
 
@@ -485,11 +538,19 @@ ParserTest > parsesPropertySetWithExpressionValue() PASSED
 
 ParserTest > elseAttachesToNearestIf() PASSED
 
+ParserTest > comparisonHasHigherPrecedenceThanEquality() PASSED
+
 ParserTest > parsesAssignmentExpression() PASSED
 
 ParserTest > rejectsMissingClosingParenthesis() PASSED
 
+ParserTest > divisionParsesLeftToRight() PASSED
+
 ParserTest > rejectsMissingClosingParenthesisAfterWhileCondition() PASSED
+
+ParserTest > subtractionParsesLeftToRight() PASSED
+
+ParserTest > equalityParsesLeftToRight() PASSED
 
 ParserTest > rejectsMissingVariableName() PASSED
 
@@ -517,17 +578,21 @@ ParserTest > parsesWhileStatement() PASSED
 
 ParserTest > parsesWhileWithBlockBody() PASSED
 
+ParserTest > rejectsMoreThan255Arguments() PASSED
+
+ParserTest > rejectsMoreThan255Parameters() PASSED
+
 ParserTest > parsesSuperExpression() PASSED
 
 ParserTest > parsesGroupingExpressions() PASSED
 
 ParserTest > parsesFactorExpressions() PASSED
 
+ParserTest > multiplicationHasHigherPrecedenceThanAddition() PASSED
+
 ParserTest > parsesClassWithSuperclass() PASSED
 
 ParserTest > parsesReturnWithoutValue() PASSED
-
-ParserTest > parsesOperatorPrecedence() PASSED
 
 ParserTest > rejectsMissingVariableInitializer() PASSED
 
@@ -565,6 +630,8 @@ ResolverTest > rejectsReturnFromTopLevelCode() PASSED
 
 ResolverTest > resolvesFunctionParameters() PASSED
 
+ResolverTest > resolvesSuperInsideNestedFunctionInSubclass() PASSED
+
 ResolverTest > allowsReturnInsideFunction() PASSED
 
 ResolverTest > resolvesSubclass() PASSED
@@ -577,11 +644,11 @@ ResolverTest > resolvesNestedFunctionScopes() PASSED
 
 ResolverTest > rejectsSuperInClassWithoutSuperclass() PASSED
 
-ScannerTest > scansTokens() PASSED
-
 ScannerTest > tracksLineNumbers() PASSED
 
 ScannerTest > rejectsMultilineUnterminatedString() PASSED
+
+ScannerTest > scansSingleCharacterTokens() PASSED
 
 ScannerTest > ignoresComments() PASSED
 
@@ -606,6 +673,8 @@ ScannerTest > scansEmptySource() PASSED
 ScannerTest > scansIdentifiers() PASSED
 
 ScannerTest > identifierCannotStartWithNumber() PASSED
+
+ScannerTest > scansOneOrTwoCharacterOperators() PASSED
 
 StmtTest > functionAcceptsVisitor() PASSED
 
@@ -671,6 +740,6 @@ GenerateAstTest > generatesStatementFields() PASSED
 
 GenerateAstTest > generatesStatementAcceptMethods() PASSED
 
-BUILD SUCCESSFUL in 55s
+BUILD SUCCESSFUL in 7s
 5 actionable tasks: 5 executed
 Configuration cache entry reused.
