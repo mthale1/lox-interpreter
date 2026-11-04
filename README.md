@@ -10,8 +10,9 @@ The interpreter can read and execute Lox programs with variables, expressions, c
 classes, methods, and inheritance. It also handles lexical scope and reports syntax, resolution, and runtime errors. 
 The project includes the functionality implemented through Chapter 13.
 
-### Limitations 
-No known deficiencies.
+### Limitations
+No known deficencies.
+
 ---
 
 ## Requirements 
